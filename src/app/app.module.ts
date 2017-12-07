@@ -5,7 +5,10 @@ import { HttpModule } from '@angular/http';
 import { MatInputModule, MatButtonModule, MatSelectModule, MatIconModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { LoginModule } from './account/login/login.module';
+import { HomeModule } from './core/home/home.module';
 
 
 @NgModule({
@@ -20,7 +23,10 @@ import { AppComponent } from './app.component';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    MatIconModule
+    MatIconModule,
+    AppRoutingModule,
+    LoginModule,
+    HomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
