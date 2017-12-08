@@ -15,6 +15,7 @@ $theme: mat-light-theme($primary, $accent, $warn);
 body {
     font-family: $mat-font-family;
     font-weight: normal;
+    margin: 0;
 }
 
 h1, h2, h3, h4 {

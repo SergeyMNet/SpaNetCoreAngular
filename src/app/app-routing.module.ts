@@ -14,11 +14,13 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
-    // Embed homepage in header/footer layout
     path: 'login',
     component: LoginComponent
-  }
-
+  },
+  {
+    path: '**',
+    component: HomeComponent
+  },
 ];
 
 @NgModule({

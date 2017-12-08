@@ -1,0 +1,21 @@
+<mat-toolbar color="primary">
+    <span><mat-icon class="mat-18">forum</mat-icon> Bot-Chat</span>
+
+    <!-- This fills the remaining space of the current row -->
+    <span class="example-fill-remaining-space"></span>
+
+    <button mat-button [matMenuTriggerFor]="menu">        
+            <mat-icon>perm_identity</mat-icon>
+            <span>Admin</span>
+        </button>
+        <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+            <mat-icon>perm_identity</mat-icon>
+            <span>Profile</span>
+        </button>
+        <button mat-menu-item>
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Logout</span>
+        </button>
+    </mat-menu>
+</mat-toolbar>
