@@ -1,0 +1,17 @@
+
+<mat-expansion-panel *ngFor="let friend of list_friends" >
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            {{friend}}
+        </mat-panel-title>        
+    </mat-expansion-panel-header>
+    
+    <div>
+        <img class="img-friend" src="assets/girl.jpg">
+        <div class="descr">
+            <div>Age: 24</div>
+            <div>City: Kiev</div>
+            <div>Other: music</div>
+        </div>
+    </div>
+</mat-expansion-panel>

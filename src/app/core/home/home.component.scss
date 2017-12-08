@@ -1,5 +1,18 @@
-.example-fill-remaining-space {
-    // This fills the remaining space, by using flexbox. 
-    // Every toolbar row uses a flexbox row layout.
-    flex: 1 1 auto;
-  }
+.bot-tab-group{    
+    .mat-tab-header{
+        width: 80vw !important;
+    }
+
+    .bot-tab-content{
+        border-bottom: 1px solid lightgray;
+    }
+}
+
+.chat{
+    margin-left: 30vw;
+    border-left: 1px solid lightgray;
+}
+.details{
+    width: 30vw;
+    float: left;
+}

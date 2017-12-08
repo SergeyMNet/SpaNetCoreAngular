@@ -1,0 +1,19 @@
+<!--component html goes here -->
+<div #scrollMe class="chat-messages">    
+    <div *ngFor="let mes of messages" [ngClass]="{input: mes.from!=='Me',output:mes.from=='Me'}">
+        <span class="descr">{{mes.from}}: {{mes.time | date:'h:mm:ss'}}</span>
+        <p [ngClass]="{input: mes.from!=='Me',output:mes.from=='Me'}">{{mes.text}}</p>
+    </div>
+</div>
+
+<div class="input-message">
+ <mat-input-container floatPlaceholder="auto">
+     <input matInput 
+            [(ngModel)]="newMessage"
+            type="text"
+            placeholder="Message">     
+ </mat-input-container>
+ 
+ <button mat-raised-button [disabled]="newMessage.length === 0"
+    (click)="addMessage()" color="primary">Send</button>
+</div>

@@ -19,6 +19,7 @@ import {
     MatSlideToggleModule,
     MatStepperModule,
     MatTabsModule,
+    MatExpansionModule
 } from '@angular/material';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -42,6 +43,7 @@ const MatModules = [
   MatSlideToggleModule,
   MatStepperModule,
   MatTabsModule,
+  MatExpansionModule
 ];
 
 @NgModule({

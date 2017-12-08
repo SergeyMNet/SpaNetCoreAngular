@@ -1,1 +1,15 @@
 <app-header></app-header>
+
+<mat-tab-group class="bot-tab-group">
+        <mat-tab *ngFor="let bot of bot_list"  label="{{bot}}">
+          <div class="bot-tab-content">
+            <div class="details">
+                <app-details-bot></app-details-bot>
+                <app-friends-list></app-friends-list>
+            </div>
+            <div class="chat">              
+              <app-chat-room></app-chat-room>
+            </div>
+          </div>
+        </mat-tab>        
+</mat-tab-group>
