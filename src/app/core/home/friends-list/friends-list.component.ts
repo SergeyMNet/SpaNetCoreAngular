@@ -10,4 +10,10 @@ export class FriendsListComponent {
     list_friends = [
         'Veronika', 'Samanta', 'Amanda', 'Francesca', 'Roberta'
     ];
+    sel_friend = '';
+
+    selFriend(friend: string) {
+        console.log(friend);
+        this.sel_friend = friend;
+    }
 }

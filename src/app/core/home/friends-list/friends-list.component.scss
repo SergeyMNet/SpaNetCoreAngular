@@ -1,11 +1,46 @@
 // component css goes here
+.list-friends{
+    height: 60vh;
+    overflow: auto;
+}
+
 .img-friend{
     width: 10vw;
     float: left;
     border-radius: 5px;
-    padding: 5px;
+    padding-right: 10px;
 }
 
 .descr{
     font-size: x-small;
+    padding-bottom: 15px;    
+}
+
+.favorite{
+    
+}
+
+.ctrl{
+
+    padding: 5px;
+
+    .cancel{
+
+    }
+
+    .love{
+        float: right;
+    }
+}
+
+.mat-expansion-panel-header-title{
+    width: 20%;
+}
+
+.mat-expansion-panel.mat-expanded{
+    border: 3px solid #2196f3;
+    
+    .mat-expansion-panel-header-title{
+        font-weight: 600;
+    }
 }

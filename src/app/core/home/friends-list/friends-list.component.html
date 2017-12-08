@@ -1,9 +1,15 @@
-
-<mat-expansion-panel *ngFor="let friend of list_friends" >
+<div class="list-friends">
+<mat-expansion-panel *ngFor="let friend of list_friends" (click)="selFriend(friend)" >
     <mat-expansion-panel-header>
         <mat-panel-title>
             {{friend}}
         </mat-panel-title>        
+        <mat-panel-description>
+            <span class="favorite">
+                <mat-icon color="primary">favorite</mat-icon>
+                <mat-icon color="primary">favorite_border</mat-icon>
+            </span>
+        </mat-panel-description>
     </mat-expansion-panel-header>
     
     <div>
@@ -13,5 +19,14 @@
             <div>City: Kiev</div>
             <div>Other: music</div>
         </div>
+        <div class="ctrl">
+            <a class="cancel" mat-mini-fab href="">
+                <mat-icon class="mat-8">close</mat-icon>
+            </a>
+            <a class="love" mat-mini-fab href="" color="primary">
+                <mat-icon class="mat-8">favorite</mat-icon>
+            </a>
+        </div>
     </div>
 </mat-expansion-panel>
+</div>
