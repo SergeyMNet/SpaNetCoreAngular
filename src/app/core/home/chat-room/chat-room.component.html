@@ -7,13 +7,16 @@
 </div>
 
 <div class="input-message">
+<form>
  <mat-input-container floatPlaceholder="auto">
      <input matInput 
-            [(ngModel)]="newMessage"
+            [(ngModel)]="newMessage.text"
+            [ngModelOptions]="{standalone: true}"
             type="text"
             placeholder="Message">     
  </mat-input-container>
  
- <button mat-raised-button [disabled]="newMessage.length === 0"
+ <button mat-raised-button [disabled]="!newMessage.text || newMessage.text.length === 0"
     (click)="addMessage()" color="primary">Send</button>
+</form>
 </div>

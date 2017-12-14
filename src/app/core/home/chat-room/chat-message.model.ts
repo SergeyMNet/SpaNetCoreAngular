@@ -14,3 +14,7 @@ export class MessageApi {
     photo: string;
     username: string;
 }
+
+export class NewMessage {
+    text: string;
+}

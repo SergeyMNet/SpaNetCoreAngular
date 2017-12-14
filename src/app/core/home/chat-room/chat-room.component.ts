@@ -2,11 +2,12 @@ import { Component, AfterViewChecked, ElementRef, ViewChild, OnInit, Input } fro
 
 import { UUID } from 'angular2-uuid';
 
+import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
-import { Message, MessageApi } from './chat-message.model';
+import { Message, MessageApi, NewMessage } from './chat-message.model';
 
 @Component({
     selector: 'app-chat-room',
@@ -18,10 +19,12 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
 
     chat_url = '/chat_rooms';
     @Input() curent_username = 'Me';
+    user: Observable<firebase.User>;
     messages: Message[];
-    newMessage = '';
+    newMessage: NewMessage = new NewMessage();
 
-    constructor(public database: AngularFireDatabase) {
+    constructor(public afAuth: AngularFireAuth, public database: AngularFireDatabase) {
+        this.afAuth.auth.signInAnonymously();
         // this.setFake();
         database.list<MessageApi>(this.chat_url).valueChanges().subscribe(
             (resp) => {
@@ -35,6 +38,7 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
             });
             }
         );
+        this.user = this.afAuth.authState;
     }
 
     ngOnInit() {
@@ -46,17 +50,16 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
     }
 
     addMessage() {
-
         this.database.list(this.chat_url).push(
             {
                 attach: '',
                 date_message: new Date().toUTCString(),
                 id: UUID.UUID(),
-                message: this.newMessage,
+                message: this.newMessage.text,
                 photo: 'user',
                 username: this.curent_username
             });
-        this.newMessage = '';
+        this.newMessage.text = '';
     }
 
     scrollToBottom(): void {
