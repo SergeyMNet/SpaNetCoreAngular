@@ -1,5 +1,8 @@
 <!--component html goes here -->
 <div class="user-details">
-    <img class="user-photo" src="assets/boy.jpg" alt="bot-img" >
-    <p>Robert, 31</p>
+    <img class="user-photo" src="assets/bot.png" alt="bot-img" >
+    <p>{{curent_username}}</p>    
+
+    <button mat-raised-button (click)="kill.emit()" color="warn">Kill</button>
+    <p></p>
 </div>

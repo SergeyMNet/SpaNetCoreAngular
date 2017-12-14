@@ -1,2 +1,10 @@
 <!--component html goes here -->
 <h1>Login</h1>
+
+<div class="row columns">
+    <button (click)="login()" *ngIf="!(user | async)?.uid">Anonymous Login</button>
+    <button (click)="logout()" *ngIf="(user | async)?.uid">Logout</button>
+
+
+    <button (click)="Send()" >test message</button>    
+</div>

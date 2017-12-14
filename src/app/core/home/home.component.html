@@ -1,14 +1,14 @@
-<app-header></app-header>
+<app-header (add_avatar)="addAvatar()"></app-header>
 
 <mat-tab-group class="bot-tab-group">
         <mat-tab *ngFor="let bot of bot_list"  label="{{bot}}">
           <div class="bot-tab-content">
             <div class="details">
-                <app-details-bot></app-details-bot>
-                <app-friends-list></app-friends-list>
+                <app-details-bot [curent_username]="bot" (kill)="kill(bot)"></app-details-bot>
+                <!-- <app-friends-list></app-friends-list> -->
             </div>
             <div class="chat">              
-              <app-chat-room></app-chat-room>
+              <app-chat-room [curent_username]="bot"></app-chat-room>
             </div>
           </div>
         </mat-tab>        

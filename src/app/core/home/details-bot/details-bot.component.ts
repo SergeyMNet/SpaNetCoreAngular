@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'app-details-bot',
@@ -7,4 +7,8 @@ import { Component } from '@angular/core';
 })
 export class DetailsBotComponent {
 
+    @Input() curent_username = 'Me';
+
+    @Output()
+    kill: EventEmitter<any> = new EventEmitter();
 }

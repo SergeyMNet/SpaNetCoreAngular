@@ -1,10 +1,12 @@
 <mat-toolbar color="primary">
-    <span><mat-icon class="mat-18">forum</mat-icon> Bot-Chat</span>
+    <span><mat-icon class="mat-18">forum</mat-icon> Avatar-Chat</span>
 
     <!-- This fills the remaining space of the current row -->
     <span class="example-fill-remaining-space"></span>
 
-    <button class="add-bot-button" mat-raised-button (click)="onClick" color="accent">Add Bot</button>
+    <button class="add-bot-button" mat-raised-button 
+                (click)="add_avatar.emit()" 
+            color="accent">Add Avatar</button>
 
     <button mat-button [matMenuTriggerFor]="menu">        
             <mat-icon>perm_identity</mat-icon>
@@ -12,8 +14,10 @@
         </button>
         <mat-menu #menu="matMenu">
         <button mat-menu-item>
-            <mat-icon>perm_identity</mat-icon>
-            <span>Profile</span>
+            <a routerLink="/login">
+                <mat-icon>perm_identity</mat-icon>
+                <span>Profile</span>
+            </a>
         </button>
         <button mat-menu-item>
             <mat-icon>exit_to_app</mat-icon>

@@ -1,8 +1,8 @@
 <!--component html goes here -->
 <div #scrollMe class="chat-messages">    
-    <div *ngFor="let mes of messages" [ngClass]="{input: mes.from!=='Me',output:mes.from=='Me'}">
-        <span class="descr">{{mes.from}}: {{mes.time | date:'h:mm:ss'}}</span>
-        <p [ngClass]="{input: mes.from!=='Me',output:mes.from=='Me'}">{{mes.text}}</p>
+    <div *ngFor="let mes of messages" [ngClass]="{input: mes.from!==curent_username,output:mes.from==curent_username}">
+        <span class="descr">{{mes.from}}: {{mes.time | date:"dd.MM.yyyy HH:mm"}}</span>
+        <p [ngClass]="{input: mes.from!==curent_username,output:mes.from==curent_username}">{{mes.text}}</p>
     </div>
 </div>
 
