@@ -1,0 +1,44 @@
+// component css goes here
+.main{
+    margin: 10px;
+
+    .title{
+        font-size: small;
+        margin-left: 10px;
+        color: #505050;
+    }
+    .list{
+        max-height: 45vh;
+        overflow: auto;
+    }
+    p.chat-item{
+        width: 80%;
+        margin-top: 5px;
+        margin-left: 10px;
+        background-color: #acacac;
+        color: white;
+        padding: 8px;
+        border-radius: 5px;
+        border: 2px;
+        cursor: pointer;
+    }
+    p.sel{
+        border: 2px solid #2196f3;
+        background-color: white;
+        color: #2196f3;
+    }
+
+    .ctrls{
+        text-align: center;
+    }
+
+    .add-chat-block{
+        text-align: center;
+        input{
+            width: 100%;
+        }
+    }
+    mat-input-container{
+        width: 100% !important;
+    }
+}

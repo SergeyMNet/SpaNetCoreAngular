@@ -10,6 +10,13 @@ import { HeaderComponent } from '../header/header.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
 import { DetailsBotComponent } from './details-bot/details-bot.component';
 import { FriendsListComponent } from './friends-list/friends-list.component';
+import { RoomsListComponent } from './rooms-list/rooms-list.component';
+import { DialogOverviewExampleDialog } from './rooms-list/rooms-list.component';
+import { DialogAddAvatar } from './home.component';
+
+
+// services
+import { ChatService } from './services/chat.service';
 
 
 @NgModule({
@@ -24,14 +31,26 @@ import { FriendsListComponent } from './friends-list/friends-list.component';
         HeaderComponent,
         ChatRoomComponent,
         DetailsBotComponent,
-        FriendsListComponent
+        FriendsListComponent,
+        RoomsListComponent,
+        DialogOverviewExampleDialog,
+        DialogAddAvatar
     ],
     exports: [
         HomeComponent,
         HeaderComponent,
         ChatRoomComponent,
         DetailsBotComponent,
-        FriendsListComponent
+        FriendsListComponent,
+        RoomsListComponent,
+        DialogOverviewExampleDialog
+    ],
+    entryComponents: [
+        DialogOverviewExampleDialog,
+        DialogAddAvatar
+     ],
+    providers: [
+        ChatService
     ]
 })
 export class HomeModule {

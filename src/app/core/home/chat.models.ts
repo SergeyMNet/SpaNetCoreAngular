@@ -18,3 +18,8 @@ export class MessageApi {
 export class NewMessage {
     text: string;
 }
+
+export class Room {
+    id: string;
+    name: string;
+}

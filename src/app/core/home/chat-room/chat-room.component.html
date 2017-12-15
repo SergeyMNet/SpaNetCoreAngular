@@ -1,8 +1,17 @@
 <!--component html goes here -->
 <div #scrollMe class="chat-messages">    
-    <div *ngFor="let mes of messages" [ngClass]="{input: mes.from!==curent_username,output:mes.from==curent_username}">
-        <span class="descr">{{mes.from}}: {{mes.time | date:"dd.MM.yyyy HH:mm"}}</span>
-        <p [ngClass]="{input: mes.from!==curent_username,output:mes.from==curent_username}">{{mes.text}}</p>
+    <div 
+        *ngFor="let mes of messages; let i = index" 
+        [ngClass]="{
+            input:mes.from!==curent_username,
+            output:mes.from==curent_username,
+            first:(i === 1 || (i > 1 && mes.from !== messages[i-1].from))}">
+        <span *ngIf="i === 1 || (i > 1 && mes.from !== messages[i-1].from)"  
+             class="descr">{{mes.from}}: {{mes.time | date:"dd.MM.yyyy HH:mm"}}</span>
+        <p [ngClass]="{
+                input: mes.from!==curent_username,
+                output:mes.from==curent_username}"
+                >{{mes.text}}</p>
     </div>
 </div>
 

@@ -1,0 +1,29 @@
+<!--component html goes here --> 
+<div class="main">    
+    <br>
+    <label class="title">Rooms:</label>    
+    <div class="list">
+        <p *ngFor="let room of rooms" 
+            (click)="selRoom(room)" 
+            [ngClass]="{sel: room.name === sel_room}"
+            class="chat-item"># {{room.name}}</p>
+    </div>
+    <br>    
+    <div *ngIf="!edit_new_room" class="ctrls">
+        <button mat-raised-button (click)="addNewRoom()" color="primary">Add Room</button>
+    </div>
+    <div *ngIf="edit_new_room"  class="add-chat-block">
+        <form>
+        <mat-input-container floatPlaceholder="auto">
+            <input matInput 
+                [(ngModel)]="new_room.name"
+                [ngModelOptions]="{standalone: true}"
+                type="text"
+                placeholder="Room name">     
+        </mat-input-container>
+        <br>        
+        <button mat-raised-button (click)="saveRoom(true)" color="accent" >Save</button>
+        <button mat-raised-button (click)="saveRoom(false)" >Cancel</button>
+        </form>
+    </div>
+</div>

@@ -7,26 +7,31 @@ import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
-import { Message, MessageApi, NewMessage } from './chat-message.model';
+import { Message, MessageApi, NewMessage } from '../chat.models';
+import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 
 @Component({
     selector: 'app-chat-room',
     templateUrl: 'chat-room.component.html',
     styleUrls: ['chat-room.component.scss']
 })
-export class ChatRoomComponent implements OnInit, AfterViewChecked {
+export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
-    chat_url = '/chat_rooms';
+    chat_url = '/chat_rooms/main';
     @Input() curent_username = 'Me';
+    private subscription: any;
     user: Observable<firebase.User>;
     messages: Message[];
     newMessage: NewMessage = new NewMessage();
 
     constructor(public afAuth: AngularFireAuth, public database: AngularFireDatabase) {
         this.afAuth.auth.signInAnonymously();
-        // this.setFake();
-        database.list<MessageApi>(this.chat_url).valueChanges().subscribe(
+
+        if (this.subscription != null) {
+            this.subscription.unsubscribe();
+        }
+        this.subscription = database.list<MessageApi>(this.chat_url).valueChanges().subscribe(
             (resp) => {
                 this.messages = resp.map(item => {
                     return  <Message> {
@@ -43,6 +48,9 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
 
     ngOnInit() {
         this.scrollToBottom();
+    }
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
     }
 
     ngAfterViewChecked() {
