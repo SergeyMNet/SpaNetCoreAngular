@@ -1,4 +1,16 @@
 
+export const images_list = [
+    'assets/bender.png',
+    'assets/cat.png',
+    'assets/dog.png',
+    'assets/professor.png',
+    'assets/lama.png',
+    'assets/sun.png',
+    'assets/batman.png',
+    'assets/rick.png',
+    'assets/fry.png',
+];
+
 export const names_list = [
     'Matha',
     'Mariann',

@@ -7,7 +7,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class DetailsBotComponent {
 
-    @Input() curent_username = 'Me';
+    @Input() curent_user_name = 'Me';
+    @Input() curent_user_img = 'Me';
 
     @Output()
     kill: EventEmitter<any> = new EventEmitter();

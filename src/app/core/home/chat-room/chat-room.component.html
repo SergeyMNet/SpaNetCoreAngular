@@ -3,14 +3,14 @@
     <div 
         *ngFor="let mes of messages; let i = index" 
         [ngClass]="{
-            input:mes.from!==curent_username,
-            output:mes.from==curent_username,
+            input:mes.from!==curent_user_name,
+            output:mes.from==curent_user_name,
             first:(i === 1 || (i > 1 && mes.from !== messages[i-1].from))}">
         <span *ngIf="i === 1 || (i > 1 && mes.from !== messages[i-1].from)"  
              class="descr">{{mes.from}}: {{mes.time | date:"dd.MM.yyyy HH:mm"}}</span>
         <p [ngClass]="{
-                input: mes.from!==curent_username,
-                output:mes.from==curent_username}"
+                input: mes.from!==curent_user_name,
+                output:mes.from==curent_user_name}"
                 >{{mes.text}}</p>
     </div>
 </div>
@@ -25,7 +25,9 @@
             placeholder="Message">     
  </mat-input-container>
  
- <button mat-raised-button [disabled]="!newMessage.text || newMessage.text.length === 0"
+ <button class="big" mat-raised-button [disabled]="!newMessage.text || newMessage.text.length === 0"
     (click)="addMessage()" color="primary">Send</button>
+ <button class="small" mat-mini-fab [disabled]="!newMessage.text || newMessage.text.length === 0"
+    (click)="addMessage()" color="primary"><mat-icon>send</mat-icon></button>
 </form>
 </div>

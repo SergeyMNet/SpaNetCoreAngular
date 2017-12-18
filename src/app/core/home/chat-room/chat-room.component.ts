@@ -19,7 +19,8 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
     chat_url = '/chat_rooms/main';
-    @Input() curent_username = 'Me';
+    @Input() curent_user_name = 'Me';
+    @Input() curent_user_img = 'Me';
     private subscription: any;
     user: Observable<firebase.User>;
     messages: Message[];
@@ -65,7 +66,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
                 id: UUID.UUID(),
                 message: this.newMessage.text,
                 photo: 'user',
-                username: this.curent_username
+                username: this.curent_user_name
             });
         this.newMessage.text = '';
     }
@@ -74,18 +75,5 @@ export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
         try {
             this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
         } catch (err) { }
-    }
-
-    setFake () {
-        for (let i = 0; i < 15; i++) {
-            const m = new Message();
-            m.id = i.toString();
-            m.from = (i % 2 === 0) ? 'Anita' : 'Me';
-            m.text = 'Lorem ipsum dolor sit amet consectetur, adipisicing elit.';
-            m.time = new Date();
-
-            this.messages.push(m);
-            this.scrollToBottom();
-        }
     }
 }

@@ -1,8 +1,9 @@
 <!--component html goes here -->
 <div class="user-details">
-    <img class="user-photo" src="assets/bot.png" alt="bot-img" >
-    <p>{{curent_username}}</p>    
-
+    <div class="block-user-photo">
+        <img class="user-photo" src="{{curent_user_img}}" alt="bot-img" >    
+    </div>
+    <p>{{curent_user_name}}</p>
     <button mat-raised-button (click)="kill.emit()" color="warn">Kill</button>
     <p></p>
 </div>

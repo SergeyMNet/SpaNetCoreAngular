@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { names_list } from './names';
+import { names_list, images_list } from './names';
+import { Avatar } from './chat.models';
 
 @Component({
     templateUrl: 'home.component.html',
@@ -9,17 +10,38 @@ import { names_list } from './names';
 export class HomeComponent {
 
     names = names_list;
+    images = images_list;
     bot_list = [];
 
     constructor(public dialog: MatDialog) {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
-        this.bot_list.unshift(new_name);
+        const img_name = this.images[Math.floor(Math.random() * this.images.length)];
+        const av = new Avatar;
+        av.name = new_name;
+        av.img = img_name;
+        this.bot_list.unshift(av);
     }
 
-    addAvatar() {
-        console.log('add avatar');
+    openDialogAddAvatar(): void {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
-        this.bot_list.unshift(new_name);
+        const img_name = this.images[Math.floor(Math.random() * this.images.length)];
+        console.log(new_name);
+        const dialogRef = this.dialog.open(DialogAddAvatar, {
+          width: '250px',
+          data: { new_name: new_name, img: img_name }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.addAvatar(new_name, img_name);
+        });
+    }
+
+    addAvatar(name: string, img_name: string) {
+        console.log('add avatar');
+        const av = new Avatar;
+        av.name = name;
+        av.img = img_name;
+        this.bot_list.unshift(av);
     }
 
     kill(key: string) {
@@ -29,24 +51,11 @@ export class HomeComponent {
             this.bot_list.splice(index, 1);
         }
     }
-
-
-    openDialogAddAvatar(): void {
-        const new_name = this.names[Math.floor(Math.random() * this.names.length)];
-        console.log(new_name);
-        const dialogRef = this.dialog.open(DialogAddAvatar, {
-          width: '250px',
-          data: { new_name: new_name }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            // this.saveRoom(result);
-        });
-    }
 }
 
 @Component({
     selector: 'app-dialog-add-avatar',
+    styleUrls: ['home.component.scss'],
     templateUrl: 'dialog-add-avatar.html',
 })
 export class DialogAddAvatar {

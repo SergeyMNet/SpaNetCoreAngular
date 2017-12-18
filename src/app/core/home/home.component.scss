@@ -16,3 +16,29 @@
     width: 30vw;
     float: left;
 }
+
+.mat-dialog-container{
+    overflow: initial;
+}
+
+.add-bot-container{
+    color: #505050;
+    text-align: center;
+    .img-bot{
+        position: fixed;
+        margin-top: -100px;
+        margin-left: 30px;
+        border: 3px solid #2196f3;
+        border-radius: 100px;
+        background-color: white;
+        padding: 20px;
+        max-height: 12vh;
+        overflow: hidden;
+        img{
+            width: 12vh;
+        }
+    }
+    h1.text{
+        margin: 0;
+    }
+}

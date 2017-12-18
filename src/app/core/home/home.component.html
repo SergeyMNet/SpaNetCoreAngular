@@ -1,14 +1,18 @@
 <app-header (add_avatar)="openDialogAddAvatar()"></app-header>
 
 <mat-tab-group class="bot-tab-group">
-        <mat-tab *ngFor="let bot of bot_list"  label="{{bot}}">
+        <mat-tab *ngFor="let bot of bot_list"  label="{{bot.name}}">
           <div class="bot-tab-content">
             <div class="details">
-                <app-details-bot [curent_username]="bot" (kill)="kill(bot)"></app-details-bot>
+                <app-details-bot [curent_user_name]="bot.name"
+                                 [curent_user_img]="bot.img" 
+                                 (kill)="kill(bot)"></app-details-bot>
                 <app-rooms-list></app-rooms-list>
             </div>
             <div class="chat">              
-              <app-chat-room [curent_username]="bot"></app-chat-room>
+              <app-chat-room 
+                [curent_user_name]="bot.name"
+                [curent_user_img]="bot.img"></app-chat-room>
             </div>
           </div>
         </mat-tab>        

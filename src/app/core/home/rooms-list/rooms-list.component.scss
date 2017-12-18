@@ -1,4 +1,7 @@
 // component css goes here
+
+$break-small: 670px;
+
 .main{
     margin: 10px;
 
@@ -8,18 +11,17 @@
         color: #505050;
     }
     .list{
-        max-height: 45vh;
+        height: 38vh;
         overflow: auto;
     }
     p.chat-item{
-        width: 80%;
         margin-top: 5px;
         margin-left: 10px;
         background-color: #acacac;
         color: white;
         padding: 8px;
         border-radius: 5px;
-        border: 2px;
+        border: 2px solid transparent;
         cursor: pointer;
     }
     p.sel{
@@ -28,17 +30,15 @@
         color: #2196f3;
     }
 
-    .ctrls{
-        text-align: center;
-    }
-
-    .add-chat-block{
-        text-align: center;
-        input{
-            width: 100%;
+    @media screen and (max-width: $break-small) {
+        p.chat-item{
+            margin-left: 0px;
+            font-size: small;
         }
     }
-    mat-input-container{
-        width: 100% !important;
+
+    button{
+        margin-top: 5px;
     }
 }
+

@@ -1,6 +1,12 @@
 
-<div style="text-align: center;">
-    <h1>{{data.new_name}}</h1>
+<div class="add-bot-container">
+    <div class="img-bot">
+        <img src="{{data.img}}" alt="bot-img">
+    </div>
     <br>
-    <button mat-raised-button [mat-dialog-close]="data" color="accent" >OK</button>
+    <h2 class="text">Your new Avatar:</h2>
+    <h1 class="text">"{{data.new_name}}"</h1>
+    <br>
+    <button mat-raised-button 
+        [mat-dialog-close]="data" color="primary" >OK</button>
 </div>

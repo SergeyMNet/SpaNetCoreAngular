@@ -1,4 +1,9 @@
 
+export class Avatar {
+    name: string;
+    img: string;
+}
+
 export class Message {
     id: string;
     from: string;

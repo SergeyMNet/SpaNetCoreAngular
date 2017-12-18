@@ -33,6 +33,7 @@ export class RoomsListComponent {
         });
 
         dialogRef.afterClosed().subscribe(result => {
+            console.log(result);
             this.saveRoom(result);
         });
     }
@@ -41,7 +42,7 @@ export class RoomsListComponent {
             const r = new Room();
             r.name = room.name;
             r.id = UUID.UUID();
-            this.rooms.push(r);
+            this.rooms.unshift(r);
             this.sel_room = r.name;
             console.log('saved');
         } else {
