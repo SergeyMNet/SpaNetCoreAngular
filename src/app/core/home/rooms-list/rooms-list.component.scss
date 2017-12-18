@@ -4,6 +4,7 @@ $break-small: 670px;
 
 .main{
     margin: 10px;
+    text-align: center;
 
     .title{
         font-size: small;
@@ -11,12 +12,11 @@ $break-small: 670px;
         color: #505050;
     }
     .list{
-        height: 38vh;
+        height: 45vh;
         overflow: auto;
     }
     p.chat-item{
         margin-top: 5px;
-        margin-left: 10px;
         background-color: #acacac;
         color: white;
         padding: 8px;
@@ -38,7 +38,8 @@ $break-small: 670px;
     }
 
     button{
-        margin-top: 5px;
+        margin: 5px 0;
+        width: 100%;
     }
 }
 

@@ -1,10 +1,11 @@
 @import "../../../../variables.scss";
 
 $break-small: 670px;
+$extra-small: 380px;
 
-.chat-messages{    
+.chat-messages {    
     padding: 0 10px;
-    height: 73vh;    
+    height: 78vh;    
     border-bottom: 1px solid lightgray;    
     background-color: #fafafa;
     overflow: auto;
@@ -38,6 +39,12 @@ $break-small: 670px;
         text-align: right;
     }
 }
+@media screen and (max-width: $extra-small) {
+    .chat-messages {    
+        height: 73vh;    
+    }
+}
+
 .input-message{
     background-color: white;
     padding: 0 10px;
