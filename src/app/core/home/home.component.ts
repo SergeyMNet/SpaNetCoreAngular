@@ -1,7 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { names_list, images_list } from './names';
-import { Avatar } from './chat.models';
+import { Avatar, Room } from './chat.models';
+
 
 @Component({
     templateUrl: 'home.component.html',
@@ -12,6 +13,8 @@ export class HomeComponent {
     names = names_list;
     images = images_list;
     bot_list = [];
+    sel_room = '';
+    rooms: Room[] = [];
 
     constructor(public dialog: MatDialog) {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
@@ -20,6 +23,7 @@ export class HomeComponent {
         av.name = new_name;
         av.img = img_name;
         this.bot_list.unshift(av);
+        this.addFakeRooms();
     }
 
     openDialogAddAvatar(): void {
@@ -50,6 +54,28 @@ export class HomeComponent {
         if (index > -1) {
             this.bot_list.splice(index, 1);
         }
+    }
+
+    selectRoom(e) {
+        console.log(e);
+    }
+
+    addFakeRooms() {
+
+        const r1 = new Room();
+        r1.id = '123';
+        r1.name = 'main';
+        this.rooms.push(r1);
+
+        const r2 = new Room();
+        r2.id = '1234';
+        r2.name = 'development';
+        this.rooms.push(r2);
+
+        const r3 = new Room();
+        r3.id = '1235';
+        r3.name = 'some_another_chat';
+        this.rooms.push(r3);
     }
 }
 

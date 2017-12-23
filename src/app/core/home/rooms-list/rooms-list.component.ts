@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { UUID } from 'angular2-uuid';
 import { Room } from '../chat.models';
@@ -8,24 +8,28 @@ import { Room } from '../chat.models';
     templateUrl: 'rooms-list.component.html',
     styleUrls: ['rooms-list.component.scss']
 })
-export class RoomsListComponent {
+export class RoomsListComponent implements OnInit {
 
-    rooms: Room[] = [];
     sel_room = '';
+    @Input() rooms: Room[] = [];
+    @Output() selectRoom: EventEmitter<any> = new EventEmitter();
 
     constructor(public dialog: MatDialog) {
-        this.addFakeRooms();
+    }
+
+    ngOnInit() {
         this.sel_room = this.rooms[0].name;
     }
 
     selRoom(room: Room) {
         this.sel_room = room.name;
+        this.selectRoom.emit(this.sel_room);
     }
 
+    // Add new Room
     addNewRoom() {
         this.openDialog();
     }
-
     openDialog(): void {
         const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
           width: '250px',
@@ -49,25 +53,6 @@ export class RoomsListComponent {
             console.log('canceled');
         }
     }
-
-    addFakeRooms() {
-
-        const r1 = new Room();
-        r1.id = '123';
-        r1.name = 'main';
-        this.rooms.push(r1);
-
-        const r2 = new Room();
-        r2.id = '123';
-        r2.name = 'development';
-        this.rooms.push(r2);
-
-        const r3 = new Room();
-        r3.id = '123';
-        r3.name = 'some another chat';
-        this.rooms.push(r3);
-    }
-
 }
 
 @Component({

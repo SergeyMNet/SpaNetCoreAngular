@@ -18,7 +18,7 @@ import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 export class ChatRoomComponent implements OnInit, OnDestroy, AfterViewChecked {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
-    chat_url = '/chat_rooms/main';
+    @Input() chat_url = '/chat_rooms/main';
     @Input() curent_user_name = 'Me';
     @Input() curent_user_img = 'Me';
     private subscription: any;
