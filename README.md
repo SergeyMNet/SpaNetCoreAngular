@@ -1,5 +1,7 @@
 # ChatBotApp
 
+![](https://hooks.bitrise.io/h/github/19d5f0f09e3648fd/KyoIehF25swqriwo9aX-2Q)
+
 This is simple chat-app
 
 ## DEMO
