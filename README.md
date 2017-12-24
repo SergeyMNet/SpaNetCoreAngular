@@ -2,9 +2,9 @@
 
 This is simple chat-app
 
-## Open example:
-`https://alice-1d9df.firebaseapp.com/`
-
+## DEMO
+Live DEMO [here](https://alice-1d9df.firebaseapp.com/)!
+[![angular-chat-app]()](https://alice-1d9df.firebaseapp.com/)
 
 ## Development server
 
