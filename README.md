@@ -1,6 +1,6 @@
 # ChatBotApp
 
-![](https://hooks.bitrise.io/h/github/19d5f0f09e3648fd/KyoIehF25swqriwo9aX-2Q)
+![](https://www.bitrise.io/app/19d5f0f09e3648fd/status.svg?token=IlnA4JFO2kzSPpkJcEuWTA&branch=master)
 
 This is simple chat-app
 
