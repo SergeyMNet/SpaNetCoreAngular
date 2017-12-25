@@ -1,4 +1,4 @@
-import { Component, Inject, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { UUID } from 'angular2-uuid';
 import { Room } from '../chat.models';
@@ -10,7 +10,7 @@ import { Room } from '../chat.models';
 })
 export class RoomsListComponent implements OnInit {
 
-    sel_room = '';
+    sel_room: Room = new Room();
     @Input() rooms: Room[] = [];
     @Output() selectRoom: EventEmitter<any> = new EventEmitter();
 
@@ -18,12 +18,12 @@ export class RoomsListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.sel_room = this.rooms[0].name;
+        this.sel_room = this.rooms[0];
     }
 
     selRoom(room: Room) {
-        this.sel_room = room.name;
-        this.selectRoom.emit(this.sel_room);
+        this.sel_room = room;
+        this.selectRoom.emit(this.sel_room.url);
     }
 
     // Add new Room
@@ -47,7 +47,7 @@ export class RoomsListComponent implements OnInit {
             r.name = room.name;
             r.id = UUID.UUID();
             this.rooms.unshift(r);
-            this.sel_room = r.name;
+            this.sel_room = r;
             console.log('saved');
         } else {
             console.log('canceled');

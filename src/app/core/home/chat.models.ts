@@ -27,4 +27,5 @@ export class NewMessage {
 export class Room {
     id: string;
     name: string;
+    url: string;
 }
