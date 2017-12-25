@@ -46,8 +46,10 @@ export class RoomsListComponent implements OnInit {
             const r = new Room();
             r.name = room.name;
             r.id = UUID.UUID();
+            r.url = '/chat_rooms/' + room.name;
             this.rooms.unshift(r);
             this.sel_room = r;
+            this.selectRoom.emit(this.sel_room.url);
             console.log('saved');
         } else {
             console.log('canceled');
