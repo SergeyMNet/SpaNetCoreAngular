@@ -29,6 +29,7 @@ export class ChatService implements OnDestroy {
                 .valueChanges().subscribe(
                 (resp) => {
                 this.messages.next(resp.map(item => {
+                    console.log(item);
                     return <Message> {
                         id: item.id,
                         from: item.username,

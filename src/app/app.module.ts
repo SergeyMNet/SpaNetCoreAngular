@@ -13,6 +13,10 @@ import { AngularFireDatabase, FirebaseObjectObservable } from 'angularfire2/data
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireAuth } from 'angularfire2/auth';
 
+// ngrx
+import { StoreModule } from '@ngrx/store';
+import { chatReducer } from './ngrx/reducer';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginModule } from './account/login/login.module';
@@ -41,6 +45,8 @@ export const firebaseConfig = {
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
+    // StoreModule.provideStore(chatReducer),
+    StoreModule.forRoot(chatReducer),
     LoginModule,
     HomeModule,
   ],
