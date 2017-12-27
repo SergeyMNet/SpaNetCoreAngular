@@ -1,6 +1,6 @@
-import '@ngrx/core/add/operator/select';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/let';
+// import '@ngrx/core/add/operator/select';
+// import 'rxjs/add/operator/map';
+// import 'rxjs/add/operator/let';
 import { Observable } from 'rxjs/Observable';
 import {
   combineReducers,
@@ -10,17 +10,55 @@ import {
   ActionReducer,
   MetaReducer, } from '@ngrx/store';
 
-import { Message } from '../core/home/chat.models';
+import { ChatRoom, Message, Avatar } from '../core/home/chat.models';
 import * as operations from './actions/operations';
+import { compose } from '@ngrx/store/src/utils';
 
 export interface State {
-  entities: Array<Message>;
+  entities: Array<ChatRoom>;
 }
 
 const initialState: State = { entities: [] };
 
 export function chatReducer(state = initialState, action: operations.Actions): State {
   switch (action.type) {
+
+    case operations.ActionTypes.ADD_ROOM: {
+      console.log('ADD ROOM');
+      console.log(state);
+      const room: ChatRoom = action.payload;
+      return {
+        entities: [...state.entities, room]
+      };
+    }
+
+    case operations.ActionTypes.REMOVE_ROOM: {
+      // todo: remove chat-room
+      console.log('REMOVE ROOM');
+      console.log(state);
+      return null;
+    }
+
+    case operations.ActionTypes.ADD_AVATAR_TO_ROOM: {
+      // todo: add avatar to chat-room
+      console.log('ADD AVATAR TO ROOM');
+      console.log(state);
+      return null;
+    }
+
+    case operations.ActionTypes.REMOVE_AVATAR_FROM_ROOM: {
+      // todo: remove avatar from chat-room
+      console.log('REMOVE AVATAR TO ROOM');
+      console.log(state);
+      return null;
+    }
+
+    case operations.ActionTypes.ADD_MESSAGE: {
+      // todo: add message to chat
+      console.log('ADD MESSAGE');
+      console.log(state);
+      return null;
+    }
 
     // case operations.ActionTypes.ADD_OPERATION: {
     //   console.log(state);

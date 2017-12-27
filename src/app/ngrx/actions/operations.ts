@@ -1,41 +1,41 @@
 import { Action } from '@ngrx/store';
-import { Message } from '../../core/home/chat.models';
+import { ChatRoom } from '../../core/home/chat.models';
 
 
 export const ActionTypes = {
-  ADD_OPERATION: 'Add an operation',
-  RESET_ALL_OPERATION: 'Reset all operations',
-  RESET_OPERATION: 'Reset an operation',
-  INCREMENT_OPERATION: 'Increment an operation',
-  DECREMENT_OPERATION: 'Decrement an operation',
+  ADD_ROOM: 'Add new chat room',
+  REMOVE_ROOM: 'Remove chat room',
+  ADD_AVATAR_TO_ROOM: 'Add avatar to room',
+  REMOVE_AVATAR_FROM_ROOM: 'Add avatar to room',
+  ADD_MESSAGE: 'Add new message',
 };
 
 
 
 
-export class AddOperationAction implements Action {
-  type = ActionTypes.ADD_OPERATION;
-  constructor(public payload: Message) { }
+export class AddRoomOperationAction implements Action {
+  type = ActionTypes.ADD_ROOM;
+  constructor(public payload: ChatRoom) { }
 }
 
-export class ResetOperationAction implements Action {
-  type = ActionTypes.RESET_OPERATION;
-  constructor(public payload: Message) { }
+export class RemoveRoomOperationAction implements Action {
+  type = ActionTypes.REMOVE_ROOM;
+  constructor(public payload: ChatRoom) { }
 }
 
-export class ResetAllOperationAction implements Action {
-  type = ActionTypes.RESET_ALL_OPERATION;
-  constructor(public payload: Message) { }
+export class AddAvatarToRoomOperationAction implements Action {
+  type = ActionTypes.ADD_AVATAR_TO_ROOM;
+  constructor(public payload: ChatRoom) { }
 }
 
-export class IncrementOperationAction implements Action {
-  type = ActionTypes.INCREMENT_OPERATION;
-  constructor(public payload: Message) { }
+export class RemoveAvatarFromRoomOperationAction implements Action {
+  type = ActionTypes.REMOVE_AVATAR_FROM_ROOM;
+  constructor(public payload: ChatRoom) { }
 }
 
-export class DecrementOperationAction implements Action {
-  type = ActionTypes.DECREMENT_OPERATION;
-  constructor(public payload: Message) { }
+export class AddMessageOperationAction implements Action {
+  type = ActionTypes.ADD_MESSAGE;
+  constructor(public payload: ChatRoom) { }
 }
 
 
@@ -44,8 +44,8 @@ export class DecrementOperationAction implements Action {
  * so that reducers can easily compose action types
  */
 export type Actions
-  = AddOperationAction |
-  ResetAllOperationAction |
-  ResetOperationAction |
-  IncrementOperationAction |
-  DecrementOperationAction;
+  = AddRoomOperationAction |
+  RemoveRoomOperationAction |
+  AddAvatarToRoomOperationAction |
+  RemoveAvatarFromRoomOperationAction |
+  AddMessageOperationAction;

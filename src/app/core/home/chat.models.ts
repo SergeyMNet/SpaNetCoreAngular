@@ -29,3 +29,9 @@ export class Room {
     name: string;
     url: string;
 }
+
+export class ChatRoom {
+    avatar: Avatar;
+    room: Room;
+    messages: Message[];
+}
