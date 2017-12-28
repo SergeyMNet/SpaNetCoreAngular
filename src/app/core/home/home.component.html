@@ -11,6 +11,7 @@
                   (kill)="kill(bot)"></app-details-bot>
                 <app-rooms-list
                   [rooms]="rooms"
+                  (addRoom)="addRoom($event)"
                   (selectRoom)="selectRoom($event)"></app-rooms-list>
             </div>
             <div class="chat">

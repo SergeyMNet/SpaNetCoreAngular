@@ -65,6 +65,10 @@ export class HomeComponent {
         this.sel_room = e;
         this.chatService.subscribeToChat(e);
     }
+    addRoom(e) {
+        console.log(e);
+        this.rooms.push(e);
+    }
 
     addFakeRooms() {
 

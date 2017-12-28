@@ -12,6 +12,7 @@ export class RoomsListComponent implements OnInit {
 
     sel_room: Room = new Room();
     @Input() rooms: Room[] = [];
+    @Output() addRoom: EventEmitter<any> = new EventEmitter();
     @Output() selectRoom: EventEmitter<any> = new EventEmitter();
 
     constructor(public dialog: MatDialog) {
@@ -47,7 +48,7 @@ export class RoomsListComponent implements OnInit {
             r.name = room.name;
             r.id = UUID.UUID();
             r.url = '/chat_rooms/' + room.name;
-            this.rooms.unshift(r);
+            this.addRoom.emit(r);
             this.sel_room = r;
             this.selectRoom.emit(this.sel_room.url);
             console.log('saved');

@@ -1,6 +1,3 @@
-// import '@ngrx/core/add/operator/select';
-// import 'rxjs/add/operator/map';
-// import 'rxjs/add/operator/let';
 import { Observable } from 'rxjs/Observable';
 import {
   combineReducers,
@@ -9,6 +6,7 @@ import {
   createFeatureSelector,
   ActionReducer,
   MetaReducer, } from '@ngrx/store';
+import { UUID } from 'angular2-uuid';
 
 import { ChatRoom, Message, Avatar } from '../core/home/chat.models';
 import * as operations from './actions/operations';
@@ -27,16 +25,16 @@ export function chatReducer(state = initialState, action: operations.Actions): S
       console.log('ADD ROOM');
       console.log(state);
       const room: ChatRoom = action.payload;
+      room.id = UUID.UUID();
       return {
         entities: [...state.entities, room]
       };
     }
 
     case operations.ActionTypes.REMOVE_ROOM: {
-      // todo: remove chat-room
       console.log('REMOVE ROOM');
       console.log(state);
-      return null;
+      return { entities: state.entities.filter(item => item.id !== action.payload.id) };
     }
 
     case operations.ActionTypes.ADD_AVATAR_TO_ROOM: {

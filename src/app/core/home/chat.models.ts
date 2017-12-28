@@ -31,6 +31,7 @@ export class Room {
 }
 
 export class ChatRoom {
+    id: string;
     avatar: Avatar;
     room: Room;
     messages: Message[];
