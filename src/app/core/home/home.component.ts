@@ -1,7 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { State, Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
-import * as fromRoot from '../../ngrx/reducer';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { names_list, images_list } from './names';
 import { Avatar, Room } from './chat.models';
@@ -20,7 +19,7 @@ export class HomeComponent {
     sel_room = '/chat_rooms/main';
     rooms: Room[] = [];
 
-    constructor(public dialog: MatDialog, public chatService: ChatService, private store: Store<fromRoot.State>) {
+    constructor(public dialog: MatDialog, public chatService: ChatService) {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
         const img_name = this.images[Math.floor(Math.random() * this.images.length)];
         const av = new Avatar;
