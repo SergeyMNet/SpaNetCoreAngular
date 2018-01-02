@@ -1,9 +1,9 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { State, Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { names_list, images_list } from './names';
-import { Avatar, Room } from './chat.models';
+import { Avatar, Room, Message, NewMessage } from './chat.models';
 import { ChatService } from './services/chat.service';
 
 
@@ -11,13 +11,18 @@ import { ChatService } from './services/chat.service';
     templateUrl: 'home.component.html',
     styleUrls: ['home.component.scss']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
 
     names = names_list;
     images = images_list;
-    bot_list = [];
+
+    sel_avatar = '';
+    bot_list: Avatar[] = [];
+
     sel_room = '/chat_rooms/main';
     rooms: Room[] = [];
+
+    messages: Message[] = [];
 
     constructor(public dialog: MatDialog, public chatService: ChatService) {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
@@ -29,10 +34,41 @@ export class HomeComponent {
         this.addFakeRooms();
     }
 
+    ngOnInit() {
+        this.chatService.subscribeToChat(this.bot_list[0].name, this.sel_room);
+        this.subscribeToChat();
+        this.chatService.selectRoom(this.sel_room);
+    }
+
+    subscribeToChat() {
+        this.chatService.messages.subscribe(
+            (resp) => {
+                this.messages = resp.map(item => {
+                    return <Message> {
+                        id: item.id,
+                        from: item.from,
+                        text: item.text,
+                        time: new Date(item.time)
+                        };
+                    });
+        });
+
+        this.chatService.getNewMessage.subscribe(
+            (resp) => {
+                this.rooms.forEach(element => {
+                    element.hasNewMessage = element.url === resp.url;
+                });
+        });
+    }
+
+    addNewMessage(e: NewMessage) {
+        this.chatService.addMessage(e);
+    }
+
+//#region AvatarMNG
     openDialogAddAvatar(): void {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
         const img_name = this.images[Math.floor(Math.random() * this.images.length)];
-        console.log(new_name);
         const dialogRef = this.dialog.open(DialogAddAvatar, {
           width: '250px',
           data: { new_name: new_name, img: img_name }
@@ -44,31 +80,32 @@ export class HomeComponent {
     }
 
     addAvatar(name: string, img_name: string) {
-        console.log('add avatar');
         const av = new Avatar;
         av.name = name;
         av.img = img_name;
         this.bot_list.unshift(av);
     }
 
-    kill(key: string) {
-        console.log('kill avatar = ' + key);
-        const index = this.bot_list.indexOf(key, 0);
+    kill(key: Avatar) {
+        const index = this.getIndex(this.bot_list, 'name', key.name);
         if (index > -1) {
             this.bot_list.splice(index, 1);
         }
     }
+    //#endregion
 
-    selectRoom(e) {
-        console.log(e);
+//#region RoomMNG
+    selectRoom(e: string) {
         this.sel_room = e;
-        this.chatService.subscribeToChat(e);
+        this.chatService.selectRoom(e);
     }
-    addRoom(e) {
-        console.log(e);
+    addRoom(e: Room) {
+        this.chatService.subscribeToChat(this.bot_list[0].name, e.url);
         this.rooms.push(e);
     }
+    //#endregion
 
+// Fake data
     addFakeRooms() {
 
         const r1 = new Room();
@@ -77,17 +114,27 @@ export class HomeComponent {
         r1.url = '/chat_rooms/main';
         this.rooms.push(r1);
 
-        const r2 = new Room();
-        r2.id = '1234';
-        r2.name = 'development';
-        r2.url = '/chat_rooms/development';
-        this.rooms.push(r2);
+        // const r2 = new Room();
+        // r2.id = '1234';
+        // r2.name = 'development';
+        // r2.url = '/chat_rooms/development';
+        // this.rooms.push(r2);
 
-        const r3 = new Room();
-        r3.id = '1235';
-        r3.name = 'some_another_chat';
-        r3.url = '/chat_rooms/some_another_chat';
-        this.rooms.push(r3);
+        // const r3 = new Room();
+        // r3.id = '1235';
+        // r3.name = 'some_another_chat';
+        // r3.url = '/chat_rooms/some_another_chat';
+        // this.rooms.push(r3);
+    }
+
+    // helpers
+    private getIndex(array: any[], attr, value): number {
+        for (let i = 0; i < array.length; i += 1) {
+            if (array[i][attr] === value) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
 

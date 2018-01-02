@@ -1,5 +1,4 @@
 // component css goes here
-
 $break-small: 670px;
 
 .main{
@@ -28,6 +27,11 @@ $break-small: 670px;
         border: 2px solid #2196f3;
         background-color: white;
         color: #2196f3;
+    }
+
+    mat-icon{
+        font-size: 16px;        
+        float: right;
     }
 
     @media screen and (max-width: $break-small) {

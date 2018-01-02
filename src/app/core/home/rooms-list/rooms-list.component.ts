@@ -25,6 +25,8 @@ export class RoomsListComponent implements OnInit {
     selRoom(room: Room) {
         this.sel_room = room;
         this.selectRoom.emit(this.sel_room.url);
+        const index = this.rooms.indexOf(room, 0);
+        this.rooms[index].hasNewMessage = false;
     }
 
     // Add new Room

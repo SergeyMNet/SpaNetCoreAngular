@@ -1,3 +1,5 @@
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 
 export class Avatar {
     name: string;
@@ -6,6 +8,7 @@ export class Avatar {
 
 export class Message {
     id: string;
+    room_id: string;
     from: string;
     time: Date;
     text: string;
@@ -21,6 +24,8 @@ export class MessageApi {
 }
 
 export class NewMessage {
+    fromAvatar: string;
+    toRoom: string;
     text: string;
 }
 
@@ -28,11 +33,14 @@ export class Room {
     id: string;
     name: string;
     url: string;
+    hasNewMessage: boolean;
 }
 
 export class ChatRoom {
     id: string;
-    avatar: Avatar;
-    room: Room;
-    messages: Message[];
+    avatar: string;
+    room: string;
+    hasNewMessage: boolean;
+    subscription: Subscription;
+    messages: Subject<Message[]>;
 }

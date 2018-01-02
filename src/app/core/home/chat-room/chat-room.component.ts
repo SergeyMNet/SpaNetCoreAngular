@@ -1,4 +1,4 @@
-import { Component, AfterViewChecked, ElementRef, ViewChild, OnInit, Input } from '@angular/core';
+import { Component, AfterViewChecked, ElementRef, ViewChild, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { UUID } from 'angular2-uuid';
 
@@ -22,16 +22,15 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
     @Input() chat_url = '/chat_rooms/main';
     @Input() curent_user_name = 'Me';
     @Input() curent_user_img = 'Me';
-    private subscription: any;
-    private user: Observable<firebase.User>;
-    private messages: Message[];
+    @Input() messages: Message[];
+    @Output() addNewMessage: EventEmitter<any> = new EventEmitter();
     private newMessage: NewMessage = new NewMessage();
+
 
     constructor(public chatService: ChatService) {
     }
 
     ngOnInit() {
-        this.subscribeToChat();
         this.scrollToBottom();
     }
 
@@ -39,24 +38,11 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
         this.scrollToBottom();
     }
 
-    subscribeToChat() {
-        this.chatService.subscribeToChat(this.chat_url);
-        this.chatService.messages.subscribe(
-            (resp) => {
-                this.messages = resp.map(item => {
-                    return <Message> {
-                        id: item.id,
-                        from: item.from,
-                        text: item.text,
-                        time: new Date(item.time)
-                        };
-                    });
-        });
-    }
-
     addMessage() {
-        this.chatService.addMessage(this.curent_user_name, this.chat_url, this.newMessage.text);
-        this.newMessage.text = '';
+        this.newMessage.fromAvatar = this.curent_user_name;
+        this.newMessage.toRoom = this.chat_url;
+        this.addNewMessage.emit(this.newMessage);
+        this.newMessage = new NewMessage();
     }
 
     scrollToBottom(): void {

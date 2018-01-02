@@ -9,14 +9,16 @@
                   [curent_user_name]="bot.name"
                   [curent_user_img]="bot.img" 
                   (kill)="kill(bot)"></app-details-bot>
-                <app-rooms-list
+                <app-rooms-list                  
                   [rooms]="rooms"
                   (addRoom)="addRoom($event)"
                   (selectRoom)="selectRoom($event)"></app-rooms-list>
             </div>
             <div class="chat">
               <app-chat-room 
+                [messages]="messages"
                 [chat_url]="sel_room"
+                (addNewMessage)="addNewMessage($event)"
                 [curent_user_name]="bot.name"
                 [curent_user_img]="bot.img"></app-chat-room>
             </div>
