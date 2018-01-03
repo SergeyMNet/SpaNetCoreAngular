@@ -16,10 +16,9 @@ export class ChatService implements OnDestroy {
     private subscription: Subscription;
     private subscriptions: Subscription[] = [];
     private chatRooms: ChatRoom[] = [];
-    public getNewMessage: Subject<Room> = new Subject<Room>();
-    public messages: Subject<Message[]> = new Subject<Message[]>();
-    public allMessages: Message[] = [];
-
+    private chatRooms$: Subject<ChatRoom> = new Subject<ChatRoom>();
+    public getNewMessage$: Subject<Room> = new Subject<Room>();
+    public messages$: Subject<Message[]> = new Subject<Message[]>();
 
     constructor(public afAuth: AngularFireAuth, public database: AngularFireDatabase) {
         this.afAuth.auth.signInAnonymously();
@@ -27,62 +26,77 @@ export class ChatService implements OnDestroy {
     }
 
     public subscribeToChat(avatar: string, chat_url: string) {
+        // check existing room - if room already added
         const isOldChat = this.hasRoomInArray(this.chatRooms, chat_url);
         if (!isOldChat) {
-
+            // create new chat-room
             const room = new ChatRoom();
             room.id = UUID.UUID();
             room.avatar = avatar;
             room.room = chat_url;
-            room.messages = new Subject<Message[]>();
+            room.messages$ = new Subject<Message[]>();
 
+            // subscribe to curent chat
             const s = this.database.list<MessageApi>(chat_url)
                 .valueChanges().subscribe(
                 (resp) => {
-                room.messages.next(resp.map(item => {
-                    this.getNewMessage.next(this.getRoom(room));
-                    room.hasNewMessage = true;
-                    return <Message> {
-                        id: item.id,
-                        room_id: chat_url,
-                        from: item.username,
-                        text: item.message,
-                        time: new Date(item.date_message)
-                    };
-                }));
-                resp.forEach(element => {
-                    this.allMessages.push({
-                        id: element.id,
-                        room_id: chat_url,
-                        from: element.username,
-                        text: element.message,
-                        time: new Date(element.date_message)
+
+                    // add all messages to chat
+                    room.messages$.next(resp.map(item => {
+                        this.getNewMessage$.next(this.getRoom(room));
+                        room.hasNewMessage = true;
+                        return <Message> {
+                            id: item.id,
+                            room_id: chat_url,
+                            from: item.username,
+                            text: item.message,
+                            time: new Date(item.date_message)
+                        };
+                    }));
+
+                    room.messagesArray = resp.map(item => {
+                        this.getNewMessage$.next(this.getRoom(room));
+                        room.hasNewMessage = true;
+                        return <Message> {
+                            id: item.id,
+                            room_id: chat_url,
+                            from: item.username,
+                            text: item.message,
+                            time: new Date(item.date_message)
+                        };
                     });
-                });
             });
 
+            // save subscription
             this.subscriptions.push(s);
+            // save room
             this.chatRooms.push(room);
         }
     }
 
     public selectRoom(chat_url: string) {
+        // get current room
         const index = this.getIndex(this.chatRooms, 'room', chat_url);
-        const old = this.getByProp(this.allMessages, 'room_id', chat_url);
-        this.messages.next(old);
         if (index > -1) {
+            // get all old messages from current room
+            const old = this.chatRooms[index].messagesArray;
+            this.messages$.next(old);
+
+            // unscribe from old room
             if (this.subscription !== undefined) {
                 this.subscription.unsubscribe();
             }
-            this.subscription = this.chatRooms[index].messages.subscribe(
+            // subscribe to new messages
+            this.subscription = this.chatRooms[index].messages$.subscribe(
                 (resp) => {
-                    this.messages.next(resp);
+                    this.messages$.next(resp);
                 }
             );
         }
     }
 
     public addMessage(message: NewMessage) {
+        // push new message to server
         this.database.list(message.toRoom).push(
             {
                 attach: '',
@@ -99,7 +113,8 @@ export class ChatService implements OnDestroy {
         this.subscription.unsubscribe();
     }
 
-    // helpers
+
+//#region helpers
     private hasRoomInArray(arr: ChatRoom[], val: string): boolean {
         return arr.some(function(arrVal) {
             return val === arrVal.room;
@@ -120,13 +135,5 @@ export class ChatService implements OnDestroy {
         }
         return -1;
     }
-    private getByProp(array: any[], attr, value): any[] {
-        const result = [];
-        for (let i = 0; i < array.length; i += 1) {
-            if (array[i][attr] === value) {
-                result.push(array[i]);
-            }
-        }
-        return result;
-    }
+    //#endregion
 }

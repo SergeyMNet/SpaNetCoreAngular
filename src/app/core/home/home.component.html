@@ -16,7 +16,7 @@
             </div>
             <div class="chat">
               <app-chat-room 
-                [messages]="messages"
+                [messages]="messages$ | async"
                 [chat_url]="sel_room"
                 (addNewMessage)="addNewMessage($event)"
                 [curent_user_name]="bot.name"

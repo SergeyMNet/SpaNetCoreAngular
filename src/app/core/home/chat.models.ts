@@ -41,6 +41,7 @@ export class ChatRoom {
     avatar: string;
     room: string;
     hasNewMessage: boolean;
-    subscription: Subscription;
-    messages: Subject<Message[]>;
+    subscription: Subscription; // todo - unsubscribe
+    messages$: Subject<Message[]>;
+    messagesArray: Message[] = []; // todo - old messages - fix it
 }

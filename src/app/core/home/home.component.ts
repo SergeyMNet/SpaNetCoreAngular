@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { names_list, images_list } from './names';
 import { Avatar, Room, Message, NewMessage } from './chat.models';
 import { ChatService } from './services/chat.service';
+import { Subject } from 'rxjs/Subject';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class HomeComponent implements OnInit {
     sel_room = '/chat_rooms/main';
     rooms: Room[] = [];
 
-    messages: Message[] = [];
+    messages$: Subject<Message[]> = new Subject<Message[]>();
 
     constructor(public dialog: MatDialog, public chatService: ChatService) {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
@@ -41,22 +42,12 @@ export class HomeComponent implements OnInit {
     }
 
     subscribeToChat() {
-        this.chatService.messages.subscribe(
-            (resp) => {
-                this.messages = resp.map(item => {
-                    return <Message> {
-                        id: item.id,
-                        from: item.from,
-                        text: item.text,
-                        time: new Date(item.time)
-                        };
-                    });
-        });
+        this.messages$ = this.chatService.messages$;
 
-        this.chatService.getNewMessage.subscribe(
+        this.chatService.getNewMessage$.subscribe(
             (resp) => {
                 this.rooms.forEach(element => {
-                    element.hasNewMessage = element.url === resp.url;
+                    element.hasNewMessage = element.url === resp.url && resp.url !== this.sel_room;
                 });
         });
     }
@@ -113,18 +104,6 @@ export class HomeComponent implements OnInit {
         r1.name = 'main';
         r1.url = '/chat_rooms/main';
         this.rooms.push(r1);
-
-        // const r2 = new Room();
-        // r2.id = '1234';
-        // r2.name = 'development';
-        // r2.url = '/chat_rooms/development';
-        // this.rooms.push(r2);
-
-        // const r3 = new Room();
-        // r3.id = '1235';
-        // r3.name = 'some_another_chat';
-        // r3.url = '/chat_rooms/some_another_chat';
-        // this.rooms.push(r3);
     }
 
     // helpers
