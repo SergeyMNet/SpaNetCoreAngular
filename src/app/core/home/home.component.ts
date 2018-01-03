@@ -17,12 +17,9 @@ export class HomeComponent implements OnInit {
     names = names_list;
     images = images_list;
 
-    sel_avatar = '';
+    sel_avatar = 0;
     bot_list: Avatar[] = [];
-
-    sel_room = '/chat_rooms/main';
-    rooms: Room[] = [];
-
+    messages: Message[] = [];
     messages$: Subject<Message[]> = new Subject<Message[]>();
 
     constructor(public dialog: MatDialog, public chatService: ChatService) {
@@ -32,22 +29,36 @@ export class HomeComponent implements OnInit {
         av.name = new_name;
         av.img = img_name;
         this.bot_list.unshift(av);
-        this.addFakeRooms();
+        this.addMainRoom();
     }
 
     ngOnInit() {
-        this.chatService.subscribeToChat(this.bot_list[0].name, this.sel_room);
+        this.chatService.subscribeToChat(this.bot_list[this.sel_avatar].sel_room);
         this.subscribeToChat();
-        this.chatService.selectRoom(this.sel_room);
+        this.chatService.selectRoom(this.bot_list[this.sel_avatar].sel_room);
     }
 
     subscribeToChat() {
+        // subscribe to new messages
         this.messages$ = this.chatService.messages$;
 
+        this.chatService.messages$.subscribe(
+            (resp) => {
+                this.messages = resp;
+            }
+        );
+
+        // subscribe to new in room
         this.chatService.getNewMessage$.subscribe(
             (resp) => {
-                this.rooms.forEach(element => {
-                    element.hasNewMessage = element.url === resp.url && resp.url !== this.sel_room;
+                console.log('some event');
+                this.bot_list.forEach(bot => {
+                    bot.rooms.forEach(element => {
+                        const hasNew = element.url === resp.url && (bot.sel_room !== this.bot_list[this.sel_avatar].sel_room );
+                        if (hasNew) {
+                            element.hasNewMessage = hasNew;
+                        }
+                    });
                 });
         });
     }
@@ -71,10 +82,13 @@ export class HomeComponent implements OnInit {
     }
 
     addAvatar(name: string, img_name: string) {
-        const av = new Avatar;
+        const av = new Avatar();
         av.name = name;
         av.img = img_name;
         this.bot_list.unshift(av);
+        this.sel_avatar = 0;
+        this.addMainRoom();
+        this.selectAvatar();
     }
 
     kill(key: Avatar) {
@@ -83,27 +97,37 @@ export class HomeComponent implements OnInit {
             this.bot_list.splice(index, 1);
         }
     }
+
+    selectAvatar() {
+        console.log('sel avatar');
+        this.chatService.selectRoom(this.bot_list[this.sel_avatar].sel_room);
+    }
     //#endregion
 
 //#region RoomMNG
     selectRoom(e: string) {
-        this.sel_room = e;
+        this.bot_list[this.sel_avatar].sel_room = e;
         this.chatService.selectRoom(e);
     }
     addRoom(e: Room) {
-        this.chatService.subscribeToChat(this.bot_list[0].name, e.url);
-        this.rooms.push(e);
+        this.chatService.subscribeToChat(e.url);
+        this.bot_list[this.sel_avatar].rooms.push(e);
     }
     //#endregion
 
-// Fake data
-    addFakeRooms() {
-
+// Add main rooms
+    addMainRoom() {
         const r1 = new Room();
-        r1.id = '123';
+        r1.id = '1';
         r1.name = 'main';
         r1.url = '/chat_rooms/main';
-        this.rooms.push(r1);
+        this.bot_list[this.sel_avatar].rooms.push(r1);
+
+        const r2 = new Room();
+        r2.id = '2';
+        r2.name = 'dev';
+        r2.url = '/chat_rooms/dev';
+        this.addRoom(r2);
     }
 
     // helpers

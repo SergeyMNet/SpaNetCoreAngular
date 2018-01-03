@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs/Subscription';
 export class Avatar {
     name: string;
     img: string;
+    sel_room = '/chat_rooms/main';
+    rooms: Room[] = [];
 }
 
 export class Message {

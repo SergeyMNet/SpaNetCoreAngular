@@ -19,20 +19,30 @@ export class ChatService implements OnDestroy {
     private chatRooms$: Subject<ChatRoom> = new Subject<ChatRoom>();
     public getNewMessage$: Subject<Room> = new Subject<Room>();
     public messages$: Subject<Message[]> = new Subject<Message[]>();
+    public rooms_keys$: Subject<string[]> = new Subject<string[]>();
 
     constructor(public afAuth: AngularFireAuth, public database: AngularFireDatabase) {
         this.afAuth.auth.signInAnonymously();
         this.user = this.afAuth.authState;
+        this.getRooms();
     }
 
-    public subscribeToChat(avatar: string, chat_url: string) {
+    public getRooms() {
+        this.database.object('/chat_rooms/')
+            .valueChanges().subscribe(rooms => {
+                const keys = Object.keys(rooms);
+                this.rooms_keys$.next(keys);
+            });
+    }
+
+    public subscribeToChat(chat_url: string) {
         // check existing room - if room already added
         const isOldChat = this.hasRoomInArray(this.chatRooms, chat_url);
         if (!isOldChat) {
             // create new chat-room
             const room = new ChatRoom();
             room.id = UUID.UUID();
-            room.avatar = avatar;
+            room.avatar = 'ALL';
             room.room = chat_url;
             room.messages$ = new Subject<Message[]>();
 
@@ -77,11 +87,12 @@ export class ChatService implements OnDestroy {
     public selectRoom(chat_url: string) {
         // get current room
         const index = this.getIndex(this.chatRooms, 'room', chat_url);
+        console.log('index ' + index);
         if (index > -1) {
             // get all old messages from current room
             const old = this.chatRooms[index].messagesArray;
             this.messages$.next(old);
-
+console.log(old);
             // unscribe from old room
             if (this.subscription !== undefined) {
                 this.subscription.unsubscribe();
