@@ -2,7 +2,10 @@
 
 ![](https://www.bitrise.io/app/19d5f0f09e3648fd/status.svg?token=IlnA4JFO2kzSPpkJcEuWTA&branch=master)
 
-This is simple chat-app
+This is simple app
+anonymous chat
+where you can create random avatar
+and start conversation with different people (including your own avatars)
 
 ## DEMO
 Live DEMO [here](https://alice-1d9df.firebaseapp.com/)!
