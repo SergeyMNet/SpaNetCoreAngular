@@ -2,7 +2,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { State, Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { AuthService } from '../auth';
 import { names_list, images_list } from './names';
 import { Avatar, Room, Message, NewMessage } from './chat.models';
 import { ChatService } from './services/chat.service';
@@ -23,13 +22,7 @@ export class HomeComponent implements OnInit {
     messages: Message[] = [];
     messages$: Subject<Message[]> = new Subject<Message[]>();
 
-    constructor(
-        public auth: AuthService,
-        public dialog: MatDialog,
-        public chatService: ChatService) {
-
-        console.log('HomeComponent');
-
+    constructor(public dialog: MatDialog, public chatService: ChatService) {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
         const img_name = this.images[Math.floor(Math.random() * this.images.length)];
         const av = new Avatar;

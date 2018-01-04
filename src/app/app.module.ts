@@ -2,39 +2,48 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule } from '@angular/router';
-
-// modules
 import { CustomMaterialModule } from './material.module';
-import { FirebaseModule } from './firebase';
-import { AuthModule } from './auth';
-import { HomeModule } from './home/home.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-// components
+import { AngularFireModule } from 'angularfire2';
+// for AngularFireDatabase
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireDatabase, FirebaseObjectObservable } from 'angularfire2/database-deprecated';
+// for AngularFireAuth
+import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFireAuth } from 'angularfire2/auth';
+
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './header/header.component';
+import { LoginModule } from './account/login/login.module';
+import { HomeModule } from './core/home/home.module';
 
+export const firebaseConfig = {
+  apiKey: 'AIzaSyACBslO6f4CubvwnzqjiZhTQK8hKxJImS4',
+  authDomain: 'alice-1d9df.firebaseapp.com',
+  databaseURL: 'https://alice-1d9df.firebaseio.com',
+  storageBucket: 'alice-1d9df.appspot.com',
+  messagingSenderId: '799235809725'
+};
 
 @NgModule({
-  bootstrap: [
-    AppComponent
-  ],
   declarations: [
-    AppComponent,
-    HeaderComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
+    AppRoutingModule,
     CustomMaterialModule,
-    RouterModule.forRoot([], {useHash: false}),
-
-    FirebaseModule,
-    AuthModule,
-    HomeModule
-  ]
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule,
+    LoginModule,
+    HomeModule,
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

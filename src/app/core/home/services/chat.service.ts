@@ -1,6 +1,6 @@
 import { Input, Injectable, OnDestroy } from '@angular/core';
 import { UUID } from 'angular2-uuid';
-// import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { Observable, Subscribable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs/Subscription';
 @Injectable()
 export class ChatService implements OnDestroy {
 
-    // private user: Observable<firebase.User>;
+    private user: Observable<firebase.User>;
     private subscription: Subscription;
     private subscriptions: Subscription[] = [];
     private chatRooms: ChatRoom[] = [];
@@ -21,11 +21,9 @@ export class ChatService implements OnDestroy {
     public messages$: Subject<Message[]> = new Subject<Message[]>();
     public rooms_keys$: Subject<string[]> = new Subject<string[]>();
 
-    constructor(
-        // public afAuth: AngularFireAuth,
-                public database: AngularFireDatabase) {
-        // this.afAuth.auth.signInAnonymously();
-        // this.user = this.afAuth.authState;
+    constructor(public afAuth: AngularFireAuth, public database: AngularFireDatabase) {
+        this.afAuth.auth.signInAnonymously();
+        this.user = this.afAuth.authState;
         this.getRooms();
     }
 
@@ -89,10 +87,12 @@ export class ChatService implements OnDestroy {
     public selectRoom(chat_url: string) {
         // get current room
         const index = this.getIndex(this.chatRooms, 'room', chat_url);
+        console.log('index ' + index);
         if (index > -1) {
             // get all old messages from current room
             const old = this.chatRooms[index].messagesArray;
             this.messages$.next(old);
+console.log(old);
             // unscribe from old room
             if (this.subscription !== undefined) {
                 this.subscription.unsubscribe();

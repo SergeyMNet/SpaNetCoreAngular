@@ -1,3 +1,5 @@
+<app-header (add_avatar)="openDialogAddAvatar()"></app-header>
+
 <mat-tab-group class="bot-tab-group" 
         (selectedTabChange)="selectAvatar()"
         [(selectedIndex)]="sel_avatar">
@@ -25,8 +27,3 @@
           </div>
         </mat-tab>        
 </mat-tab-group>
-
-<div class="add-bot-button">
-  <button mat-raised-button color="accent"
-          (click)="openDialogAddAvatar()" >Add Avatar</button>
-</div>

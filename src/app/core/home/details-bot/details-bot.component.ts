@@ -10,5 +10,6 @@ export class DetailsBotComponent {
     @Input() curent_user_name = 'Me';
     @Input() curent_user_img = 'Me';
 
-    @Output() kill: EventEmitter<any> = new EventEmitter();
+    @Output()
+    kill: EventEmitter<any> = new EventEmitter();
 }
