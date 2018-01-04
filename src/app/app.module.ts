@@ -2,48 +2,39 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { CustomMaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 
-import { AngularFireModule } from 'angularfire2';
-// for AngularFireDatabase
-import { AngularFireDatabaseModule } from 'angularfire2/database';
-import { AngularFireDatabase, FirebaseObjectObservable } from 'angularfire2/database-deprecated';
-// for AngularFireAuth
-import { AngularFireAuthModule } from 'angularfire2/auth';
-import { AngularFireAuth } from 'angularfire2/auth';
+// modules
+import { CustomMaterialModule } from './material.module';
+import { FirebaseModule } from './firebase';
+import { AuthModule } from './auth';
+import { HomeModule } from './home/home.module';
 
-import { AppRoutingModule } from './app-routing.module';
+// components
 import { AppComponent } from './app.component';
-import { LoginModule } from './account/login/login.module';
-import { HomeModule } from './core/home/home.module';
+import { HeaderComponent } from './header/header.component';
 
-export const firebaseConfig = {
-  apiKey: 'AIzaSyACBslO6f4CubvwnzqjiZhTQK8hKxJImS4',
-  authDomain: 'alice-1d9df.firebaseapp.com',
-  databaseURL: 'https://alice-1d9df.firebaseio.com',
-  storageBucket: 'alice-1d9df.appspot.com',
-  messagingSenderId: '799235809725'
-};
 
 @NgModule({
-  declarations: [
+  bootstrap: [
     AppComponent
+  ],
+  declarations: [
+    AppComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
     CustomMaterialModule,
-    AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireDatabaseModule,
-    AngularFireAuthModule,
-    LoginModule,
-    HomeModule,
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    RouterModule.forRoot([], {useHash: false}),
+
+    FirebaseModule,
+    AuthModule,
+    HomeModule
+  ]
 })
 export class AppModule { }

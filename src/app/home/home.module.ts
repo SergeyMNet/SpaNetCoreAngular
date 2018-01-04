@@ -1,12 +1,10 @@
 // Angular Imports
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { CustomMaterialModule } from '../../material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-// This Module's Components
+// components
 import { HomeComponent } from './home.component';
-import { HeaderComponent } from '../header/header.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
 import { DetailsBotComponent } from './details-bot/details-bot.component';
 import { FriendsListComponent } from './friends-list/friends-list.component';
@@ -14,6 +12,9 @@ import { RoomsListComponent } from './rooms-list/rooms-list.component';
 import { DialogOverviewExampleDialog } from './rooms-list/rooms-list.component';
 import { DialogAddAvatar } from './home.component';
 
+// modules
+import { CustomMaterialModule } from '../material.module';
+import { HomeRoutesModule } from './home.routes';
 
 // services
 import { ChatService } from './services/chat.service';
@@ -25,10 +26,10 @@ import { ChatService } from './services/chat.service';
         CustomMaterialModule,
         FormsModule,
         ReactiveFormsModule,
+        HomeRoutesModule
     ],
     declarations: [
         HomeComponent,
-        HeaderComponent,
         ChatRoomComponent,
         DetailsBotComponent,
         FriendsListComponent,
@@ -38,7 +39,6 @@ import { ChatService } from './services/chat.service';
     ],
     exports: [
         HomeComponent,
-        HeaderComponent,
         ChatRoomComponent,
         DetailsBotComponent,
         FriendsListComponent,
