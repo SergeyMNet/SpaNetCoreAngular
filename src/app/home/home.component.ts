@@ -21,25 +21,14 @@ export class HomeComponent implements OnInit {
     sel_avatar = 0;
     bot_list: Avatar[] = [];
     messages: Message[] = [];
-    messages$: Subject<Message[]> = new Subject<Message[]>();
 
-    constructor(
-        public auth: AuthService,
-        public dialog: MatDialog,
-        public chatService: ChatService) {
-
-        console.log('HomeComponent');
-
-        const new_name = this.names[Math.floor(Math.random() * this.names.length)];
-        const img_name = this.images[Math.floor(Math.random() * this.images.length)];
-        const av = new Avatar;
-        av.name = new_name;
-        av.img = img_name;
-        this.bot_list.unshift(av);
-        this.addMainRoom();
+    constructor(public auth: AuthService,
+                public dialog: MatDialog,
+                public chatService: ChatService) {
     }
 
     ngOnInit() {
+        this.addFirstAvatar();
         this.chatService.subscribeToChat(this.bot_list[this.sel_avatar].sel_room);
         this.subscribeToChat();
         this.chatService.selectRoom(this.bot_list[this.sel_avatar].sel_room);
@@ -47,8 +36,6 @@ export class HomeComponent implements OnInit {
 
     subscribeToChat() {
         // subscribe to new messages
-        this.messages$ = this.chatService.messages$;
-
         this.chatService.messages$.subscribe(
             (resp) => {
                 this.messages = resp;
@@ -75,6 +62,18 @@ export class HomeComponent implements OnInit {
     }
 
 //#region AvatarMNG
+
+    addFirstAvatar() {
+        const new_name = this.names[Math.floor(Math.random() * this.names.length)];
+        const img_name = this.images[Math.floor(Math.random() * this.images.length)];
+        const av = new Avatar;
+        av.name = new_name;
+        av.img = img_name;
+        this.bot_list.unshift(av);
+
+        this.addMainRoom();
+    }
+
     openDialogAddAvatar(): void {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
         const img_name = this.images[Math.floor(Math.random() * this.images.length)];
@@ -94,6 +93,7 @@ export class HomeComponent implements OnInit {
         av.img = img_name;
         this.bot_list.unshift(av);
         this.sel_avatar = 0;
+
         this.addMainRoom();
         this.selectAvatar();
     }

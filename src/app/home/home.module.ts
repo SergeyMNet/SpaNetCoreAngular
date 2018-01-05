@@ -7,7 +7,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './home.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
 import { DetailsBotComponent } from './details-bot/details-bot.component';
-import { FriendsListComponent } from './friends-list/friends-list.component';
 import { RoomsListComponent } from './rooms-list/rooms-list.component';
 import { DialogOverviewExampleDialog } from './rooms-list/rooms-list.component';
 import { DialogAddAvatar } from './home.component';
@@ -18,6 +17,8 @@ import { HomeRoutesModule } from './home.routes';
 
 // services
 import { ChatService } from './services/chat.service';
+import { AvatarService } from './services/avatar.service';
+
 
 
 @NgModule({
@@ -32,7 +33,6 @@ import { ChatService } from './services/chat.service';
         HomeComponent,
         ChatRoomComponent,
         DetailsBotComponent,
-        FriendsListComponent,
         RoomsListComponent,
         DialogOverviewExampleDialog,
         DialogAddAvatar
@@ -41,7 +41,6 @@ import { ChatService } from './services/chat.service';
         HomeComponent,
         ChatRoomComponent,
         DetailsBotComponent,
-        FriendsListComponent,
         RoomsListComponent,
         DialogOverviewExampleDialog
     ],
@@ -50,7 +49,8 @@ import { ChatService } from './services/chat.service';
         DialogAddAvatar
      ],
     providers: [
-        ChatService
+        ChatService,
+        AvatarService
     ]
 })
 export class HomeModule {

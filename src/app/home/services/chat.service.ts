@@ -1,7 +1,6 @@
-import { Input, Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { UUID } from 'angular2-uuid';
-// import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+import { AngularFireDatabase } from 'angularfire2/database';
 import { Observable, Subscribable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
@@ -12,7 +11,6 @@ import { Subscription } from 'rxjs/Subscription';
 @Injectable()
 export class ChatService implements OnDestroy {
 
-    // private user: Observable<firebase.User>;
     private subscription: Subscription;
     private subscriptions: Subscription[] = [];
     private chatRooms: ChatRoom[] = [];
@@ -21,11 +19,7 @@ export class ChatService implements OnDestroy {
     public messages$: Subject<Message[]> = new Subject<Message[]>();
     public rooms_keys$: Subject<string[]> = new Subject<string[]>();
 
-    constructor(
-        // public afAuth: AngularFireAuth,
-                public database: AngularFireDatabase) {
-        // this.afAuth.auth.signInAnonymously();
-        // this.user = this.afAuth.authState;
+    constructor(public database: AngularFireDatabase) {
         this.getRooms();
     }
 
@@ -107,6 +101,7 @@ export class ChatService implements OnDestroy {
     }
 
     public addMessage(message: NewMessage) {
+        console.log(message);
         // push new message to server
         this.database.list(message.toRoom).push(
             {

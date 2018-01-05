@@ -2,6 +2,8 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 export class Avatar {
+    id: string;
+    uid: string;
     name: string;
     img: string;
     sel_room = '/chat_rooms/main';
