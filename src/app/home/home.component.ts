@@ -8,6 +8,7 @@ import { Avatar, Room, Message, NewMessage } from './chat.models';
 import { ChatService } from './services/chat.service';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
+import { UUID } from 'angular2-uuid';
 
 
 @Component({
@@ -53,7 +54,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             (resp) => {
                 this.bot_list.forEach(bot => {
                     bot.rooms.forEach(element => {
-                        const hasNew = element.url === resp.url && (resp.url !== this.bot_list[this.sel_avatar].sel_room);
+                        const hasNew = element.url === resp.url
+                                && (resp.url !== this.bot_list[this.sel_avatar].sel_room
+                                || bot.id !== this.bot_list[this.sel_avatar].id);
                         console.log(hasNew);
                         if (hasNew) {
                             element.hasNewMessage = hasNew;
@@ -63,8 +66,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
     }
 
-    addNewMessage(e: NewMessage) {
-        this.chatService.addMessage(e);
+    addNewMessage(message: NewMessage) {
+        this.chatService.addMessage(message);
     }
 
 //#region AvatarMNG
@@ -75,6 +78,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         const av = new Avatar;
         av.name = new_name;
         av.img = img_name;
+        av.id = UUID.UUID();
         this.bot_list.unshift(av);
 
         this.addMainRoom();
@@ -97,6 +101,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         const av = new Avatar();
         av.name = name;
         av.img = img_name;
+        av.id = UUID.UUID();
         this.bot_list.unshift(av);
         this.sel_avatar = 0;
 

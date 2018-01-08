@@ -6,12 +6,17 @@
             input:mes.from!==curent_user_name,
             output:mes.from==curent_user_name,
             first:(i === 1 || (i > 1 && mes.from !== messages[i-1].from))}">
+        <div *ngIf="i === 1 || (i > 1 && mes.from !== messages[i-1].from) && mes.from !== curent_user_name"
+            class="photo_container">
+            <img src="{{mes.photo}}" class="input">
+        </div>
         <span *ngIf="i === 1 || (i > 1 && mes.from !== messages[i-1].from)"  
              class="descr">{{mes.from}}: {{mes.time | date:"dd.MM.yyyy HH:mm"}}</span>
         <p [ngClass]="{
                 input: mes.from!==curent_user_name,
                 output:mes.from==curent_user_name}"
                 >{{mes.text}}</p>
+                
     </div>
 </div>
 

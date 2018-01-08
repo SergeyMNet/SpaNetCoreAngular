@@ -40,7 +40,9 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
 
     addMessage() {
         this.newMessage.fromAvatar = this.curent_user_name;
+        this.newMessage.fromAvatarImg = this.curent_user_img;
         this.newMessage.toRoom = this.chat_url;
+        this.newMessage.attach = '';
         this.addNewMessage.emit(this.newMessage);
         this.newMessage = new NewMessage();
     }

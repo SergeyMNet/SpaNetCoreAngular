@@ -14,6 +14,7 @@ export class Message {
     id: string;
     room_id: string;
     from: string;
+    photo: string;
     time: Date;
     text: string;
   }
@@ -29,8 +30,10 @@ export class MessageApi {
 
 export class NewMessage {
     fromAvatar: string;
+    fromAvatarImg: string;
     toRoom: string;
     text: string;
+    attach: string;
 }
 
 export class Room {

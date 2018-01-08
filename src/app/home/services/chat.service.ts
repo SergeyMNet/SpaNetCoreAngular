@@ -4,7 +4,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { Observable, Subscribable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
-import { Message, MessageApi, NewMessage, ChatRoom, Room } from '../chat.models';
+import { Message, MessageApi, NewMessage, ChatRoom, Room, Avatar } from '../chat.models';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -55,18 +55,19 @@ export class ChatService implements OnDestroy {
                             id: item.id,
                             room_id: chat_url,
                             from: item.username,
+                            photo: item.photo,
                             text: item.message,
                             time: new Date(item.date_message)
                         };
                     }));
 
                     room.messagesArray = resp.map(item => {
-                        // this.getNewMessage$.next(this.getRoom(room));
                         room.hasNewMessage = true;
                         return <Message> {
                             id: item.id,
                             room_id: chat_url,
                             from: item.username,
+                            photo: item.photo,
                             text: item.message,
                             time: new Date(item.date_message)
                         };
@@ -105,11 +106,11 @@ export class ChatService implements OnDestroy {
         // push new message to server
         this.database.list(message.toRoom).push(
             {
-                attach: '',
-                date_message: new Date().toUTCString(),
                 id: UUID.UUID(),
+                date_message: new Date().toUTCString(),
+                attach: message.attach,
                 message: message.text,
-                photo: 'user',
+                photo: message.fromAvatarImg,
                 username: message.fromAvatar,
                 room_id: message.toRoom
             });
