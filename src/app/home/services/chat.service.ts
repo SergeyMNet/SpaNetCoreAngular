@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs/Subscription';
 export class ChatService implements OnDestroy {
 
     private subscription: Subscription;
+    private subscription_rooms: Subscription;
     private subscriptions: Subscription[] = [];
     private chatRooms: ChatRoom[] = [];
     private chatRooms$: Subject<ChatRoom> = new Subject<ChatRoom>();
@@ -20,11 +21,11 @@ export class ChatService implements OnDestroy {
     public rooms_keys$: Subject<string[]> = new Subject<string[]>();
 
     constructor(public database: AngularFireDatabase) {
-        this.getRooms();
+        // this.getRooms();
     }
 
     public getRooms() {
-        this.database.object('/chat_rooms/')
+        this.subscription_rooms = this.database.object('/chat_rooms/')
             .valueChanges().subscribe(rooms => {
                 const keys = Object.keys(rooms);
                 this.rooms_keys$.next(keys);
@@ -44,12 +45,11 @@ export class ChatService implements OnDestroy {
 
             // subscribe to curent chat
             const s = this.database.list<MessageApi>(chat_url)
-                .valueChanges().subscribe(
+                .valueChanges(['child_added']).subscribe(
                 (resp) => {
-
+                    this.getNewMessage$.next(this.getRoom(room));
                     // add all messages to chat
                     room.messages$.next(resp.map(item => {
-                        this.getNewMessage$.next(this.getRoom(room));
                         room.hasNewMessage = true;
                         return <Message> {
                             id: item.id,
@@ -61,7 +61,7 @@ export class ChatService implements OnDestroy {
                     }));
 
                     room.messagesArray = resp.map(item => {
-                        this.getNewMessage$.next(this.getRoom(room));
+                        // this.getNewMessage$.next(this.getRoom(room));
                         room.hasNewMessage = true;
                         return <Message> {
                             id: item.id,
@@ -116,7 +116,13 @@ export class ChatService implements OnDestroy {
     }
 
     ngOnDestroy() {
+        console.log('-onDestroy-');
+        this.chatRooms = [];
+        this.subscription_rooms.unsubscribe();
         this.subscription.unsubscribe();
+        this.subscriptions.forEach(sub => {
+            sub.unsubscribe();
+        });
     }
 
 

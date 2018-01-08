@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { State, Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -7,16 +7,21 @@ import { names_list, images_list } from './names';
 import { Avatar, Room, Message, NewMessage } from './chat.models';
 import { ChatService } from './services/chat.service';
 import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 
 
 @Component({
     templateUrl: 'home.component.html',
     styleUrls: ['home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
     names = names_list;
     images = images_list;
+
+
+    sub_messages: Subscription;
+    sub_new_messages: Subscription;
 
     sel_avatar = 0;
     bot_list: Avatar[] = [];
@@ -29,6 +34,7 @@ export class HomeComponent implements OnInit {
 
     ngOnInit() {
         this.addFirstAvatar();
+        this.chatService.getRooms();
         this.chatService.subscribeToChat(this.bot_list[this.sel_avatar].sel_room);
         this.subscribeToChat();
         this.chatService.selectRoom(this.bot_list[this.sel_avatar].sel_room);
@@ -36,19 +42,19 @@ export class HomeComponent implements OnInit {
 
     subscribeToChat() {
         // subscribe to new messages
-        this.chatService.messages$.subscribe(
+         this.sub_messages = this.chatService.messages$.subscribe(
             (resp) => {
                 this.messages = resp;
             }
         );
 
         // subscribe to new in room
-        this.chatService.getNewMessage$.subscribe(
+        this.sub_new_messages = this.chatService.getNewMessage$.subscribe(
             (resp) => {
-                console.log('some event');
                 this.bot_list.forEach(bot => {
                     bot.rooms.forEach(element => {
-                        const hasNew = element.url === resp.url && (bot.sel_room !== this.bot_list[this.sel_avatar].sel_room );
+                        const hasNew = element.url === resp.url && (resp.url !== this.bot_list[this.sel_avatar].sel_room);
+                        console.log(hasNew);
                         if (hasNew) {
                             element.hasNewMessage = hasNew;
                         }
@@ -145,6 +151,14 @@ export class HomeComponent implements OnInit {
             }
         }
         return -1;
+    }
+
+
+    ngOnDestroy() {
+        console.log('-onDestroy-');
+        this.sub_messages.unsubscribe();
+        this.sub_new_messages.unsubscribe();
+        this.chatService.ngOnDestroy();
     }
 }
 
