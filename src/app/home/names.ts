@@ -1,14 +1,11 @@
 
 export const images_list = [
-    'assets/bender.png',
-    'assets/cat.png',
-    'assets/dog.png',
-    'assets/professor.png',
-    'assets/lama.png',
-    'assets/sun.png',
-    'assets/batman.png',
-    'assets/rick.png',
-    'assets/fry.png',
+    'assets/bot-1.png',
+    'assets/bot-2.png',
+    'assets/bot-3.png',
+    'assets/bot-4.png',
+    'assets/bot-5.png',
+    'assets/bot-6.png'
 ];
 
 export const names_list = [
