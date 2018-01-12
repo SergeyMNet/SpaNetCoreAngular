@@ -27,26 +27,26 @@ $small: 600px;
     text-align: center;
     .img-bot{
         height: 150px;
-        position: fixed;
         margin-top: -120px;
-        margin-left: 30px;
         border: 3px solid #2196f3;
         border-radius: 100px;
         background-color: white;
         padding: 20px;
-        max-height: 12vh;
         overflow: hidden;
         img{
-            width: 12vh;
+            width: 90%;
         }
     }
     h2.text{
-        padding-top: 50px;
         margin-bottom: 0px;
     }
     h1.text{
         margin: 0;
     }
+}
+
+/deep/ mat-dialog-container.mat-dialog-container {
+    overflow: unset;
 }
 
 /deep/ mat-tab-header {

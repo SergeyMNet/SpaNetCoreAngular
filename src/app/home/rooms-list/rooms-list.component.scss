@@ -11,8 +11,8 @@ $break-small: 670px;
         color: #505050;
     }
     .list{
-        height: 45vh;
-        overflow: auto;
+        height: 40vh;
+        overflow-y: auto;
     }
     p.chat-item{
         margin-top: 5px;

@@ -2,22 +2,19 @@
 .user-details{
     text-align: center;
     border-bottom: 1px solid #eeeeee;
-    background-color: #fafafa;
     padding: 10px;
-
-    .block-user-photo{
-        margin: auto;
-        width: 20vw;
-        height: 20vw;
-        padding: 10px;
-        overflow: hidden;
-        border-radius: 100px;
-        background-color: white;
+    
     .user-photo{
         margin-top: 10px;
         margin-bottom: -10px;
-        width: 15vw;
+        width: 20vw;
         border-radius: 5px;        
     }
+
+    .name {
+        font-size: 40px;
+        font-family: cursive;
+        margin: 10px 0;
     }
+    
 }
