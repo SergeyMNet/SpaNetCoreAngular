@@ -1,5 +1,4 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { State, Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AuthService } from '../auth';
@@ -20,13 +19,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     names = names_list;
     images = images_list;
 
-
+    sub_rooms: Subscription;
     sub_messages: Subscription;
     sub_new_messages: Subscription;
 
     sel_avatar = 0;
     bot_list: Avatar[] = [];
     messages: Message[] = [];
+    all_rooms: Room[] = [];
 
     constructor(public auth: AuthService,
                 public dialog: MatDialog,
@@ -34,16 +34,26 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.addFirstAvatar();
         this.chatService.getRooms();
-        this.chatService.subscribeToChat(this.bot_list[this.sel_avatar].sel_room);
         this.subscribeToChat();
-        this.chatService.selectRoom(this.bot_list[this.sel_avatar].sel_room);
+        if (this.bot_list.length > 0) {
+            this.chatService.subscribeToChat(this.bot_list[this.sel_avatar].sel_room);
+            this.chatService.selectRoom(this.bot_list[this.sel_avatar].sel_room);
+        }
     }
 
     subscribeToChat() {
+
+        this.sub_rooms = this.chatService.rooms_keys$.subscribe(
+            (resp) => {
+                this.all_rooms = resp.map(name => {
+                    return new Room(name);
+                });
+            }
+        );
+
         // subscribe to new messages
-         this.sub_messages = this.chatService.messages$.subscribe(
+        this.sub_messages = this.chatService.messages$.subscribe(
             (resp) => {
                 this.messages = resp;
             }
@@ -71,19 +81,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
 //#region AvatarMNG
-
-    addFirstAvatar() {
-        const new_name = this.names[Math.floor(Math.random() * this.names.length)];
-        const img_name = this.images[Math.floor(Math.random() * this.images.length)];
-        const av = new Avatar;
-        av.name = new_name;
-        av.img = img_name;
-        av.id = UUID.UUID();
-        this.bot_list.unshift(av);
-
-        this.addMainRoom();
-    }
-
     openDialogAddAvatar(): void {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
         const img_name = this.images[Math.floor(Math.random() * this.images.length)];
@@ -131,22 +128,15 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.chatService.subscribeToChat(e.url);
         this.bot_list[this.sel_avatar].rooms.push(e);
     }
-    //#endregion
 
-// Add main rooms
+    // Add main rooms
     addMainRoom() {
-        const r1 = new Room();
-        r1.id = '1';
-        r1.name = 'main';
-        r1.url = '/chat_rooms/main';
-        this.bot_list[this.sel_avatar].rooms.push(r1);
-
-        const r2 = new Room();
-        r2.id = '2';
-        r2.name = 'dev';
-        r2.url = '/chat_rooms/dev';
-        this.addRoom(r2);
+        this.all_rooms.forEach(r => {
+            this.addRoom(r);
+        });
     }
+
+    //#endregion
 
     // helpers
     private getIndex(array: any[], attr, value): number {
@@ -161,6 +151,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         console.log('-onDestroy-');
+        this.sub_rooms.unsubscribe();
         this.sub_messages.unsubscribe();
         this.sub_new_messages.unsubscribe();
         this.chatService.ngOnDestroy();

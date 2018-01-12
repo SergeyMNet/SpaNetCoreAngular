@@ -1,5 +1,8 @@
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
+import { UUID } from 'angular2-uuid';
+
+const main_url = '/chat_rooms/';
 
 export class Avatar {
     id: string;
@@ -41,6 +44,12 @@ export class Room {
     name: string;
     url: string;
     hasNewMessage: boolean;
+
+    constructor(name: string = '') {
+        this.id = UUID.UUID();
+        this.name = name;
+        this.url = main_url + name;
+    }
 }
 
 export class ChatRoom {

@@ -11,6 +11,7 @@ import { Room } from '../chat.models';
 export class RoomsListComponent implements OnInit {
 
     sel_room: Room = new Room();
+    @Input() sel_room_url: string = '';
     @Input() rooms: Room[] = [];
     @Output() addRoom: EventEmitter<any> = new EventEmitter();
     @Output() selectRoom: EventEmitter<any> = new EventEmitter();
@@ -19,7 +20,15 @@ export class RoomsListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.sel_room = this.rooms[0];
+        this.startSelRoom();
+    }
+
+    startSelRoom() {
+        this.rooms.forEach(r => {
+            if (r.url === this.sel_room_url) {
+                this.sel_room = r;
+            }
+        });
     }
 
     selRoom(room: Room) {
@@ -45,11 +54,8 @@ export class RoomsListComponent implements OnInit {
         });
     }
     saveRoom(room: Room) {
-        if (room != null) {
-            const r = new Room();
-            r.name = room.name;
-            r.id = UUID.UUID();
-            r.url = '/chat_rooms/' + room.name;
+        if (room != null && room.name != null && room.name.length > 0) {
+            const r = new Room(room.name);
             this.addRoom.emit(r);
             this.sel_room = r;
             this.selectRoom.emit(this.sel_room.url);

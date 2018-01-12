@@ -9,7 +9,8 @@
                   [curent_user_name]="bot.name"
                   [curent_user_img]="bot.img" 
                   (kill)="kill(bot)"></app-details-bot>
-                <app-rooms-list                  
+                <app-rooms-list              
+                  [sel_room_url]="bot.sel_room"    
                   [rooms]="bot.rooms"
                   (addRoom)="addRoom($event)"
                   (selectRoom)="selectRoom($event)"></app-rooms-list>
