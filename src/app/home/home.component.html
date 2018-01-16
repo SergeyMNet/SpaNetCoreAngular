@@ -1,7 +1,7 @@
 <mat-tab-group class="bot-tab-group" 
         (selectedTabChange)="selectAvatar()"
         [(selectedIndex)]="sel_avatar">
-        <mat-tab *ngFor="let bot of bot_list"
+        <mat-tab *ngFor="let bot of avatars"
                   label="{{bot.name}}">
           <div class="bot-tab-content">
             <div class="details">

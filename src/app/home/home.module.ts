@@ -10,6 +10,7 @@ import { DetailsBotComponent } from './details-bot/details-bot.component';
 import { RoomsListComponent } from './rooms-list/rooms-list.component';
 import { DialogOverviewExampleDialog } from './rooms-list/rooms-list.component';
 import { DialogAddAvatar } from './home.component';
+import { StoreModule } from '@ngrx/store';
 
 // modules
 import { CustomMaterialModule } from '../material.module';
@@ -17,7 +18,6 @@ import { HomeRoutesModule } from './home.routes';
 
 // services
 import { ChatService } from './services/chat.service';
-import { AvatarService } from './services/avatar.service';
 
 
 
@@ -27,7 +27,7 @@ import { AvatarService } from './services/avatar.service';
         CustomMaterialModule,
         FormsModule,
         ReactiveFormsModule,
-        HomeRoutesModule
+        HomeRoutesModule,
     ],
     declarations: [
         HomeComponent,
@@ -50,7 +50,6 @@ import { AvatarService } from './services/avatar.service';
      ],
     providers: [
         ChatService,
-        AvatarService
     ]
 })
 export class HomeModule {

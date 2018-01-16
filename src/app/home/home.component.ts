@@ -19,12 +19,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     names = names_list;
     images = images_list;
 
+    sub_user_id: Subscription;
+    sub_avatars: Subscription;
     sub_rooms: Subscription;
     sub_messages: Subscription;
     sub_new_messages: Subscription;
 
+    user_id = '';
     sel_avatar = 0;
-    bot_list: Avatar[] = [];
+    avatars: Avatar[] = [];
     messages: Message[] = [];
     all_rooms: Room[] = [];
 
@@ -34,53 +37,81 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.chatService.getRooms();
+
+        // #4 subscriptions avatars/rooms/messages/new
         this.subscribeToChat();
-        if (this.bot_list.length > 0) {
-            this.chatService.subscribeToChat(this.bot_list[this.sel_avatar].sel_room);
-            this.chatService.selectRoom(this.bot_list[this.sel_avatar].sel_room);
-        }
+
+        // #1 get user ID
+        this.sub_user_id = this.auth.uid$.subscribe(
+            // #2 get avatars by uid
+            uid => {
+                this.user_id = uid;
+                // #3 get rooms (all)
+                this.chatService.getRooms();
+                this.chatService.getAvatars(uid);
+            }
+        );
     }
 
     subscribeToChat() {
 
-        this.sub_rooms = this.chatService.rooms_keys$.subscribe(
+        // subscribe to avatars
+        this.sub_avatars = this.chatService.avatars$.subscribe(
             (resp) => {
-                this.all_rooms = resp.map(name => {
-                    return new Room(name);
+                this.avatars = resp;
+                this.avatars.forEach(bot => {
+                    this.all_rooms.forEach(r => bot.rooms.push(new Room(r.name)));
                 });
             }
         );
 
+        // subscribe to rooms
+        this.sub_rooms = this.chatService.rooms_keys$.subscribe(
+            (resp) => {
+                this.all_rooms = resp.map(name => new Room(name) );
+                this.subscribeToRooms();
+             }
+        );
+
         // subscribe to new messages
         this.sub_messages = this.chatService.messages$.subscribe(
-            (resp) => {
-                this.messages = resp;
-            }
+            (resp) => { this.messages = resp; }
         );
 
         // subscribe to new in room
-        this.sub_new_messages = this.chatService.getNewMessage$.subscribe(
-            (resp) => {
-                this.bot_list.forEach(bot => {
-                    bot.rooms.forEach(element => {
-                        const hasNew = element.url === resp.url
-                                && (resp.url !== this.bot_list[this.sel_avatar].sel_room
-                                || bot.id !== this.bot_list[this.sel_avatar].id);
-                        console.log(hasNew);
+        this.sub_new_messages = this.chatService.newMessageInRoom$.subscribe(
+            (url) => {
+                this.avatars.forEach(bot => {
+                    bot.rooms.forEach(room => {
+                        const hasNew = room.url === url
+                                 && bot.id !== this.avatars[this.sel_avatar].id;
                         if (hasNew) {
-                            element.hasNewMessage = hasNew;
+                            room.hasNewMessage = hasNew;
                         }
                     });
                 });
         });
     }
 
+// Add new message
     addNewMessage(message: NewMessage) {
         this.chatService.addMessage(message);
     }
 
-//#region AvatarMNG
+//#region Avatars CRUD
+
+    addAvatar(av: Avatar) {
+        this.chatService.addAvatar(av);
+    }
+
+    kill(key: Avatar) {
+        this.chatService.removeAvatar(key);
+    }
+
+    selectAvatar() {
+        this.chatService.selectRoom(this.avatars[this.sel_avatar].sel_room);
+    }
+
     openDialogAddAvatar(): void {
         const new_name = this.names[Math.floor(Math.random() * this.names.length)];
         const img_name = this.images[Math.floor(Math.random() * this.images.length)];
@@ -90,55 +121,33 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.addAvatar(new_name, img_name);
+            const av = new Avatar();
+            av.name = new_name;
+            av.img = img_name;
+            av.id = UUID.UUID();
+            av.uid = this.user_id;
+            this.addAvatar(av);
+
         });
     }
+//#endregion
 
-    addAvatar(name: string, img_name: string) {
-        const av = new Avatar();
-        av.name = name;
-        av.img = img_name;
-        av.id = UUID.UUID();
-        this.bot_list.unshift(av);
-        this.sel_avatar = 0;
+//#region Rooms CRUD
 
-        this.addMainRoom();
-        this.selectAvatar();
-    }
-
-    kill(key: Avatar) {
-        const index = this.getIndex(this.bot_list, 'name', key.name);
-        if (index > -1) {
-            this.bot_list.splice(index, 1);
-        }
-    }
-
-    selectAvatar() {
-        console.log('sel avatar');
-        this.chatService.selectRoom(this.bot_list[this.sel_avatar].sel_room);
-    }
-    //#endregion
-
-//#region RoomMNG
     selectRoom(e: string) {
-        this.bot_list[this.sel_avatar].sel_room = e;
+        this.avatars[this.sel_avatar].sel_room = e;
         this.chatService.selectRoom(e);
     }
-    addRoom(e: Room) {
-        this.chatService.subscribeToChat(e.url);
-        this.bot_list[this.sel_avatar].rooms.push(e);
-    }
 
-    // Add main rooms
-    addMainRoom() {
+    subscribeToRooms() {
         this.all_rooms.forEach(r => {
-            this.addRoom(r);
+            this.chatService.subscribeToChat(r.url);
         });
     }
 
-    //#endregion
+//#endregion
 
-    // helpers
+// helpers
     private getIndex(array: any[], attr, value): number {
         for (let i = 0; i < array.length; i += 1) {
             if (array[i][attr] === value) {
@@ -151,6 +160,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         console.log('-onDestroy-');
+        this.sub_user_id.unsubscribe();
+        this.sub_avatars.unsubscribe();
         this.sub_rooms.unsubscribe();
         this.sub_messages.unsubscribe();
         this.sub_new_messages.unsubscribe();

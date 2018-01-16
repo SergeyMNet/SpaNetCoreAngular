@@ -22,8 +22,6 @@ import {
     MatExpansionModule
 } from '@angular/material';
 
-import { FlexLayoutModule } from '@angular/flex-layout';
-
 const MatModules = [
   MatToolbarModule,
   MatButtonModule,
@@ -48,12 +46,10 @@ const MatModules = [
 
 @NgModule({
   imports: [
-    ...MatModules,
-    FlexLayoutModule
+    ...MatModules
   ],
   exports: [
-    ...MatModules,
-    FlexLayoutModule
+    ...MatModules
   ],
   declarations: []
 })

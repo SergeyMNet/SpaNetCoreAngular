@@ -14,14 +14,10 @@ export class AuthService {
   user_name$: Subject<string> = new Subject<string>();
 
   constructor(public afAuth: AngularFireAuth) {
-    this.initUser();
-  }
-
-  initUser() {
-    this.authenticated$ = this.afAuth.authState.map(user => !!user);
-    this.uid$ = this.afAuth.authState.map(user => user.uid);
-    this.afAuth.authState.map(user => user.displayName).subscribe((resp => {
-      this.user_name$.next(resp);
+    this.authenticated$ = afAuth.authState.map(user => !!user);
+    this.uid$ = afAuth.authState.map(user => { if (user !== null) { return user.uid; } return ''; });
+    this.afAuth.authState.subscribe((resp => {
+      if (resp !== null) { this.user_name$.next(resp.displayName); }
     }));
   }
 

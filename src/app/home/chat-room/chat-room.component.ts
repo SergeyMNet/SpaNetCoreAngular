@@ -8,7 +8,6 @@ import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
 import { Message, MessageApi, NewMessage } from '../chat.models';
-import { ChatService } from '../services/chat.service';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 
 @Component({
@@ -27,7 +26,7 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
     private newMessage: NewMessage = new NewMessage();
 
 
-    constructor(public chatService: ChatService) {
+    constructor() {
     }
 
     ngOnInit() {

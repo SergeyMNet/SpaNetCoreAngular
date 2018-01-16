@@ -4,6 +4,16 @@ import { UUID } from 'angular2-uuid';
 
 const main_url = '/chat_rooms/';
 
+
+export class AvatarApi {
+    id: string;
+    uid: string;
+    name: string;
+    img: string;
+    sel_room = '/chat_rooms/main';
+}
+
+
 export class Avatar {
     id: string;
     uid: string;
