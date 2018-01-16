@@ -57,6 +57,7 @@ export class ChatService implements OnDestroy {
                     av.name = u.name;
                     av.img = u.img;
                     av.sel_room = u.sel_room;
+                    av.create_date = u.create_date;
                     return av;
                 }));
             });
@@ -70,6 +71,7 @@ export class ChatService implements OnDestroy {
                 uid: avatar.uid,
                 name: avatar.name,
                 img: avatar.img,
+                create_date: Date.now(),
                 sel_room: avatar.sel_room
             });
     }
@@ -85,8 +87,22 @@ export class ChatService implements OnDestroy {
     public getRooms() {
         this.subscription_rooms = this.database.object('/chat_rooms/')
             .valueChanges().subscribe(rooms => {
-                const keys = Object.keys(rooms);
-                this.rooms_keys$.next(keys);
+                if (rooms !== null) {
+                    const keys = Object.keys(rooms);
+                    this.rooms_keys$.next(keys);
+                } else {
+                    // add init message
+                    this.database.list(chat_rooms_url + 'main').push(
+                        {
+                            id: UUID.UUID(),
+                            date_message: new Date().toUTCString(),
+                            attach: '',
+                            message: 'init chat',
+                            photo: '',
+                            username: 'admin',
+                            room_id: ''
+                        });
+                }
             });
     }
 

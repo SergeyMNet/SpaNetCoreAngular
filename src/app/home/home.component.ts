@@ -58,10 +58,22 @@ export class HomeComponent implements OnInit, OnDestroy {
         // subscribe to avatars
         this.sub_avatars = this.chatService.avatars$.subscribe(
             (resp) => {
+                console.log(resp);
+                // sort by time
+                resp = resp.sort((a, b) => {
+                    if (a.create_date > b.create_date) {
+                      return -1;
+                    }
+                    if (a.create_date < b.create_date) {
+                      return 1;
+                    }
+                    return 0;
+                });
                 this.avatars = resp;
                 this.avatars.forEach(bot => {
                     this.all_rooms.forEach(r => bot.rooms.push(new Room(r.name)));
                 });
+                this.sel_avatar = 0;
             }
         );
 
@@ -144,6 +156,12 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.chatService.subscribeToChat(r.url);
         });
     }
+
+    addRoom(e: Room) {
+        this.chatService.subscribeToChat(e.url);
+        this.avatars[this.sel_avatar].rooms.push(e);
+    }
+
 
 //#endregion
 

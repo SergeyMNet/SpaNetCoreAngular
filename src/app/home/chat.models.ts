@@ -10,6 +10,7 @@ export class AvatarApi {
     uid: string;
     name: string;
     img: string;
+    create_date: number;
     sel_room = '/chat_rooms/main';
 }
 
@@ -19,6 +20,7 @@ export class Avatar {
     uid: string;
     name: string;
     img: string;
+    create_date: number;
     sel_room = '/chat_rooms/main';
     rooms: Room[] = [];
 }
