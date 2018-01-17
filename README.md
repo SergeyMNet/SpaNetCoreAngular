@@ -29,3 +29,7 @@ Live DEMO [here](https://alice-1d9df.firebaseapp.com/)!
 
 Run `npm i` for install all nodes.
 Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. 
+
+
+## Projects Used
+Thanks [AhsanAyaz](https://github.com/AhsanAyaz/ng2-emoji) for great lib [ng2-emoji](https://www.npmjs.com/package/ng2-emoji)
