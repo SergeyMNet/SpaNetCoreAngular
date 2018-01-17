@@ -1,0 +1,10 @@
+
+<div class="dialog-emoji">
+    <div class="result" [innerHTML]="sel_emoji | emojis"></div>
+    <hr>
+    <div class="list">
+        <p *ngFor="let em of emojies" [innerHTML]="em | emojis" 
+            (mouseenter)="selectEmoji(em)"
+            (click)="sendEmoji(em)" ></p>
+    </div>
+</div>

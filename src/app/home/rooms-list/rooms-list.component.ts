@@ -2,6 +2,7 @@ import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { UUID } from 'angular2-uuid';
 import { Room } from '../chat.models';
+import { DialogOverviewExampleDialog } from './dialogs/dialogOverviewExampleDialog';
 
 @Component({
     selector: 'app-rooms-list',
@@ -66,17 +67,4 @@ export class RoomsListComponent implements OnInit {
     }
 }
 
-@Component({
-    selector: 'app-dialog-overview-example-dialog',
-    templateUrl: 'dialog-add-room.html',
-})
-export class DialogOverviewExampleDialog {
-
-    constructor(public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
-                @Inject(MAT_DIALOG_DATA) public data: any) {
-    }
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-}
 

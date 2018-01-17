@@ -47,7 +47,7 @@ export class NewMessage {
     fromAvatar: string;
     fromAvatarImg: string;
     toRoom: string;
-    text: string;
+    text = '';
     attach: string;
 }
 

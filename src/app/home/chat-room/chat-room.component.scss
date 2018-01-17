@@ -66,8 +66,13 @@ $extra-small: 450px;
     background-color: white;
     padding: 0 10px;
 
+    .emotion-button {
+        float: left;
+        margin-top: 10px;
+    }
+
     .mat-form-field {
-        width: 80%;
+        width: 65%;
     }
     button.big{
         float: right;
@@ -85,5 +90,20 @@ $extra-small: 450px;
         button.small{
             display: inline;
         }   
+    }
+}
+
+.dialog-emoji{
+    .result{
+        text-align: center;
+    }
+    .list{
+        width: 240px;
+        height: 285px;
+        p{
+            float: left;
+            padding: 5px;
+            cursor: pointer;
+        }
     }
 }

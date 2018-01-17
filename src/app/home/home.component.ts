@@ -8,7 +8,7 @@ import { ChatService } from './services/chat.service';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { UUID } from 'angular2-uuid';
-
+import { DialogAddAvatar } from './dialogAddAvatar';
 
 @Component({
     templateUrl: 'home.component.html',
@@ -184,21 +184,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.sub_messages.unsubscribe();
         this.sub_new_messages.unsubscribe();
         this.chatService.ngOnDestroy();
-    }
-}
-
-@Component({
-    selector: 'app-dialog-add-avatar',
-    styleUrls: ['home.component.scss'],
-    templateUrl: 'dialog-add-avatar.html',
-})
-export class DialogAddAvatar {
-
-    constructor(public dialogRef: MatDialogRef<DialogAddAvatar>,
-                @Inject(MAT_DIALOG_DATA) public data: any) {
-    }
-    onNoClick(): void {
-        this.dialogRef.close();
     }
 }
 

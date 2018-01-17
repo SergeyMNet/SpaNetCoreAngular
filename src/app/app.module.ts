@@ -31,7 +31,6 @@ import { HeaderComponent } from './header/header.component';
     BrowserAnimationsModule,
     CustomMaterialModule,
     RouterModule.forRoot([], {useHash: false}),
-
     FirebaseModule,
     AuthModule,
     HomeModule

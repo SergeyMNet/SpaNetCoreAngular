@@ -6,24 +6,26 @@
             input:mes.from!==curent_user_name,
             output:mes.from===curent_user_name,
             first:(i === 0 || (i > 1 && mes.from !== messages[i-1].from))}">
-        <div *ngIf="(i===0 || (i > 0 && mes.from !== messages[i-1].from)) && mes.from !== curent_user_name"
+        <div *ngIf="(i === 0 || (i > 0 && mes.from !== messages[i-1].from)) && mes.from !== curent_user_name"
             class="photo_container">
             <img src="{{mes.photo}}" class="input">
         </div>
-        <span *ngIf="i === 0 || (i > 1 && mes.from !== messages[i-1].from)"  
+        <span *ngIf="i === 0 || (i > 0 && mes.from !== messages[i-1].from)"  
              class="descr">{{mes.from}}: {{mes.time | date:"dd.MM.yyyy HH:mm"}}</span>
-        <p [ngClass]="{
-                input: mes.from!==curent_user_name,
-                output:mes.from==curent_user_name}"
-                >{{mes.text}}</p>
-                
+        <p [ngClass]="{input: mes.from!==curent_user_name, output:mes.from==curent_user_name}"
+            [innerHTML]="mes.text | emojis"></p>
+        <br *ngIf="i === 0">
     </div>
+    <br>
 </div>
 
 <div class="input-message">
+<button class="emotion-button" mat-icon-button (click)="getEmotionList()" color="primary">
+    <mat-icon class="mat-18">insert_emoticon</mat-icon>
+</button>
 <form>
  <mat-input-container floatPlaceholder="auto">
-     <input matInput 
+     <input #focusMe matInput autofocus
             [(ngModel)]="newMessage.text"
             [ngModelOptions]="{standalone: true}"
             type="text"
