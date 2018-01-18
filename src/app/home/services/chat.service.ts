@@ -1,13 +1,15 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { Observable, Subscribable } from 'rxjs/Observable';
-import * as firebase from 'firebase/app';
+import * as firebase from 'firebase';
 
-import { Message, MessageApi, NewMessage, ChatRoom, Room, Avatar, AvatarApi } from '../chat.models';
+import { Message, MessageApi, NewMessage, ChatRoom, Room, Avatar, AvatarApi, Upload } from '../chat.models';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
+const files_url = '/images/';
 const chat_rooms_url = '/chat_rooms/';
 const users_url = '/users/';
 
@@ -25,8 +27,12 @@ export class ChatService implements OnDestroy {
     public newMessageInRoom$: Subject<string> = new Subject<string>();
     public messages$: Subject<Message[]> = new Subject<Message[]>();
 
+    private itemsCollection: AngularFirestoreCollection<File>;
+    private items: Observable<File[]>;
+    progress: {percentage: number} = { percentage: 0 };
 
-    constructor(public database: AngularFireDatabase) {
+    constructor(public database: AngularFireDatabase,
+                public store: AngularFirestore) {
     }
 
     public addMessage(message: NewMessage) {
@@ -42,6 +48,33 @@ export class ChatService implements OnDestroy {
                 room_id: message.toRoom
             });
     }
+
+
+    public pushUpload(message: NewMessage) {
+        const upload: Upload = message.attachFile;
+
+
+        const storageRef = firebase.storage().ref();
+        const uploadTask = storageRef.child(`${files_url}/${message.attachFile.file.name}`).put(message.attachFile.file);
+
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+          (snapshot) => {
+            // in progress
+            const snap = snapshot as firebase.storage.UploadTaskSnapshot;
+            this.progress.percentage = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+          },
+          (error) => {
+            // fail
+            console.error(error);
+          },
+          () => {
+            // success
+            message.attach = uploadTask.snapshot.downloadURL;
+            console.log(uploadTask.snapshot.downloadURL);
+            this.addMessage(message);
+          }
+        );
+      }
 
 //#region Avatars CRUD
 
@@ -129,6 +162,7 @@ export class ChatService implements OnDestroy {
                             id: item.id,
                             room_id: chat_url,
                             from: item.username,
+                            attach: item.attach,
                             photo: item.photo,
                             text: item.message,
                             time: new Date(item.date_message)
@@ -143,6 +177,7 @@ export class ChatService implements OnDestroy {
                             from: item.username,
                             photo: item.photo,
                             text: item.message,
+                            attach: item.attach,
                             time: new Date(item.date_message)
                         };
                     });

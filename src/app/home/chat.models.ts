@@ -32,6 +32,7 @@ export class Message {
     photo: string;
     time: Date;
     text: string;
+    attach: string;
   }
 
 export class MessageApi {
@@ -48,7 +49,8 @@ export class NewMessage {
     fromAvatarImg: string;
     toRoom: string;
     text = '';
-    attach: string;
+    attach = '';
+    attachFile: Upload;
 }
 
 export class Room {
@@ -72,4 +74,17 @@ export class ChatRoom {
     subscription: Subscription; // todo - unsubscribe
     messages$: Subject<Message[]>;
     messagesArray: Message[] = []; // todo - old messages - fix it
+}
+
+export class Upload {
+    $key: string;
+    file: File;
+    name: string;
+    url: string;
+    progress: number;
+    createdAt: Date = new Date();
+
+    constructor(file: File) {
+      this.file = file;
+    }
 }

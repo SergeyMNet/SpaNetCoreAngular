@@ -1,40 +1,41 @@
 <!--component html goes here -->
-<div #scrollMe class="chat-messages">    
-    <div 
-        *ngFor="let mes of messages; let i = index" 
-        [ngClass]="{
+<div #scrollMe class="chat-messages">
+    <div *ngFor="let mes of messages; let i = index" [ngClass]="{
             input:mes.from!==curent_user_name,
             output:mes.from===curent_user_name,
             first:(i === 0 || (i > 1 && mes.from !== messages[i-1].from))}">
-        <div *ngIf="(i === 0 || (i > 0 && mes.from !== messages[i-1].from)) && mes.from !== curent_user_name"
-            class="photo_container">
+        <div *ngIf="(i === 0 || (i > 0 && mes.from !== messages[i-1].from)) && mes.from !== curent_user_name" class="photo_container">
             <img src="{{mes.photo}}" class="input">
         </div>
-        <span *ngIf="i === 0 || (i > 0 && mes.from !== messages[i-1].from)"  
-             class="descr">{{mes.from}}: {{mes.time | date:"dd.MM.yyyy HH:mm"}}</span>
-        <p [ngClass]="{input: mes.from!==curent_user_name, output:mes.from==curent_user_name}"
-            [innerHTML]="mes.text | emojis"></p>
+        <span *ngIf="i === 0 || (i > 0 && mes.from !== messages[i-1].from)" class="descr">{{mes.from}}: {{mes.time | date:"dd.MM.yyyy HH:mm"}}</span>
+        <p *ngIf="mes.text.length > 0" [ngClass]="{input: mes.from!==curent_user_name, output:mes.from==curent_user_name}" [innerHTML]="mes.text | emojis"></p>
+        <p *ngIf="mes.attach" [ngClass]="{input: mes.from!==curent_user_name, output:mes.from==curent_user_name}">
+            <img src="{{mes.attach}}" class="image-in-chat" >
+        </p>
         <br *ngIf="i === 0">
     </div>
     <br>
 </div>
 
 <div class="input-message">
-<button class="emotion-button" mat-icon-button (click)="getEmotionList()" color="primary">
-    <mat-icon class="mat-18">insert_emoticon</mat-icon>
-</button>
-<form>
- <mat-input-container floatPlaceholder="auto">
-     <input #focusMe matInput autofocus
-            [(ngModel)]="newMessage.text"
-            [ngModelOptions]="{standalone: true}"
-            type="text"
-            placeholder="Message">     
- </mat-input-container>
- 
- <button class="big" mat-raised-button [disabled]="!newMessage.text || newMessage.text.length === 0"
-    (click)="addMessage()" color="primary">Send</button>
- <button class="small" mat-mini-fab [disabled]="!newMessage.text || newMessage.text.length === 0"
-    (click)="addMessage()" color="primary"><mat-icon>send</mat-icon></button>
-</form>
+
+    <input #input hidden type="file" class="button" accept="image/x-png,image/gif,image/jpeg" (change)="detectFiles($event)">
+    <button class="file-button" mat-icon-button (click)="insertFile()" color="primary">
+        <mat-icon class="mat-18">attach_file</mat-icon>
+    </button>
+
+    <button class="emotion-button" mat-icon-button (click)="getEmotionList()" color="primary">
+        <mat-icon class="mat-18">insert_emoticon</mat-icon>
+    </button>
+    <form>
+        <mat-input-container floatPlaceholder="auto">
+            <input #focusMe matInput autofocus [(ngModel)]="newMessage.text" [ngModelOptions]="{standalone: true}" type="text" placeholder="Message">
+        </mat-input-container>
+
+        <button class="big" mat-raised-button [disabled]="!newMessage.text || newMessage.text.length === 0" (click)="addMessage()"
+            color="primary">Send</button>
+        <button class="small" mat-mini-fab [disabled]="!newMessage.text || newMessage.text.length === 0" (click)="addMessage()" color="primary">
+            <mat-icon>send</mat-icon>
+        </button>
+    </form>
 </div>

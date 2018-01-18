@@ -1,11 +1,9 @@
 import { Component, AfterViewChecked, ElementRef, ViewChild, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatInput } from '@angular/material';
 import { UUID } from 'angular2-uuid';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
-import { Message, MessageApi, NewMessage } from '../chat.models';
+import { Message, MessageApi, NewMessage, Upload } from '../chat.models';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DialogEmojiList } from './dialogs/dialogEmojiList';
 
@@ -16,6 +14,7 @@ import { DialogEmojiList } from './dialogs/dialogEmojiList';
 })
 export class ChatRoomComponent implements OnInit, AfterViewChecked {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
+    @ViewChild('input') private myInputContainer: ElementRef;
     @ViewChild(MatInput) input;
 
     @Input() chat_url = '/chat_rooms/main';
@@ -23,7 +22,10 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
     @Input() curent_user_img = 'Me';
     @Input() messages: Message[];
     @Output() addNewMessage: EventEmitter<any> = new EventEmitter();
+    @Output() addNewFileMessage: EventEmitter<any> = new EventEmitter();
     private newMessage: NewMessage = new NewMessage();
+    private selectedFiles: FileList | null;
+    private currentUpload: Upload;
 
     constructor(public dialog: MatDialog) {
     }
@@ -36,13 +38,28 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
         this.scrollToBottom();
     }
 
-    addMessage() {
+    addMessage(attach: Upload = null) {
         this.newMessage.fromAvatar = this.curent_user_name;
         this.newMessage.fromAvatarImg = this.curent_user_img;
         this.newMessage.toRoom = this.chat_url;
-        this.newMessage.attach = '';
+        this.newMessage.attachFile = attach;
         this.addNewMessage.emit(this.newMessage);
         this.newMessage = new NewMessage();
+    }
+
+    detectFiles($event: Event) {
+        this.selectedFiles = ($event.target as HTMLInputElement).files;
+        const file = this.selectedFiles;
+        if (file && file.length === 1) {
+            this.currentUpload = new Upload(file.item(0));
+            this.addMessage(this.currentUpload);
+        }
+    }
+
+    insertFile() {
+        try {
+            this.myInputContainer.nativeElement.click();
+        } catch (err) { }
     }
 
     insertEmoji(text: string) {
@@ -52,8 +69,8 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
 
     getEmotionList(): void {
         const dialogRef = this.dialog.open(DialogEmojiList, {
-          width: '250px',
-          data: ''
+            width: '250px',
+            data: ''
         });
 
         dialogRef.afterClosed().subscribe(result => {

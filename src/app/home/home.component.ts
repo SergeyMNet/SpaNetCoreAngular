@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AuthService } from '../auth';
 import { names_list, images_list } from './names';
-import { Avatar, Room, Message, NewMessage } from './chat.models';
+import { Avatar, Room, Message, NewMessage, Upload } from './chat.models';
 import { ChatService } from './services/chat.service';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -107,8 +107,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 // Add new message
     addNewMessage(message: NewMessage) {
-        this.chatService.addMessage(message);
+        if (message.attachFile !== null) {
+            // send img to chat
+            this.chatService.pushUpload(message);
+        } else {
+            // send text to chat
+            this.chatService.addMessage(message);
+        }
     }
+
 
 //#region Avatars CRUD
 

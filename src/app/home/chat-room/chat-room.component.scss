@@ -37,6 +37,10 @@ $extra-small: 450px;
         margin-left: 30%;        
     }
 
+    img.image-in-chat {
+        max-width: 100%;
+    }
+
     .output{        
         text-align: right;
     }
@@ -58,21 +62,28 @@ $extra-small: 450px;
 }
 @media screen and (max-width: $extra-small) {
     .chat-messages {    
-        height: 73vh;    
+        height: 73vh;
     }
 }
 
 .input-message{
     background-color: white;
-    padding: 0 10px;
+    padding: 0;
+    padding-right: 5px;
 
-    .emotion-button {
+    .file-button {
         float: left;
         margin-top: 10px;
     }
 
+    .emotion-button {
+        float: left;
+        margin-top: 10px;
+        margin-right: 5px;
+    }
+
     .mat-form-field {
-        width: 65%;
+        width: 55%;
     }
     button.big{
         float: right;
@@ -89,7 +100,16 @@ $extra-small: 450px;
         }   
         button.small{
             display: inline;
-        }   
+        }
+    }
+
+    @media screen and (max-width: $extra-small) {
+        .file-button {
+            width: 25px;
+        }    
+        .emotion-button {
+            width: 25px;
+        }
     }
 }
 
