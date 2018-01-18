@@ -71,3 +71,47 @@ $small: 600px;
         right: 5px;
     }
 }
+
+
+
+
+// add alarm for new messages
+.alert{
+    animation-name: alert-new-animation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+@keyframes alert-new-animation {
+    0%   {background-color: white;}
+    50%  {background-color: orange;}
+}
+/deep/ mat-tab-group.avatar0 #mat-tab-label-0-0 {
+    @extend .alert;
+}
+/deep/ mat-tab-group.avatar1 #mat-tab-label-0-1 {
+    @extend .alert;
+}
+/deep/ mat-tab-group.avatar2 #mat-tab-label-0-2 {
+    @extend .alert;
+}
+/deep/ mat-tab-group.avatar3 #mat-tab-label-0-3 {
+    @extend .alert;
+}
+/deep/ mat-tab-group.avatar4 #mat-tab-label-0-4 {
+    @extend .alert;
+}
+/deep/ mat-tab-group.avatar5 #mat-tab-label-0-5 {
+    @extend .alert;
+}
+/deep/ mat-tab-group.avatar6 #mat-tab-label-0-6 {
+    @extend .alert;
+}
+/deep/ mat-tab-group.avatar7 #mat-tab-label-0-7 {
+    @extend .alert;
+}
+/deep/ mat-tab-group.avatar8 #mat-tab-label-0-8 {
+    @extend .alert;
+}
+/deep/ mat-tab-group.avatar9 #mat-tab-label-0-9 {
+    @extend .alert;
+}

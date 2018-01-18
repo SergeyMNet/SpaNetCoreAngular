@@ -31,6 +31,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     messages: Message[] = [];
     all_rooms: Room[] = [];
 
+    new_for_avatars: string[] = [];
+
+
     constructor(public auth: AuthService,
                 public dialog: MatDialog,
                 public chatService: ChatService) {
@@ -93,14 +96,21 @@ export class HomeComponent implements OnInit, OnDestroy {
         // subscribe to new in room
         this.sub_new_messages = this.chatService.newMessageInRoom$.subscribe(
             (url) => {
+                let i = 0;
                 this.avatars.forEach(bot => {
                     bot.rooms.forEach(room => {
-                        const hasNew = room.url === url
-                                 && bot.id !== this.avatars[this.sel_avatar].id;
+                        const hasNew = room.url === url && bot.id !== this.avatars[this.sel_avatar].id;
                         if (hasNew) {
                             room.hasNewMessage = hasNew;
+
+                            // set alarm css to new message for avatar
+                            const ava = 'avatar' + i;
+                            const ind = this.new_for_avatars.indexOf(ava);
+                            if (ind > -1) { this.new_for_avatars.splice(ind, 1); }
+                            this.new_for_avatars.push(ava);
                         }
                     });
+                    i++;
                 });
         });
     }
@@ -129,6 +139,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     selectAvatar() {
         this.chatService.selectRoom(this.avatars[this.sel_avatar].sel_room);
+
+        // clear alarm
+        const ind = this.new_for_avatars.indexOf('avatar' + this.sel_avatar);
+        if (ind > -1) { this.new_for_avatars.splice(ind, 1); }
     }
 
     openDialogAddAvatar(): void {
