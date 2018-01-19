@@ -10,7 +10,6 @@ import { Ng2EmojiModule } from 'ng2-emoji';
 import { HomeComponent } from './home.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
 import { DetailsBotComponent } from './details-bot/details-bot.component';
-import { FriendsListComponent } from './friends-list/friends-list.component';
 import { RoomsListComponent } from './rooms-list/rooms-list.component';
 import { DialogOverviewExampleDialog } from './rooms-list/dialogs/dialogOverviewExampleDialog';
 import { DialogAddAvatar } from './dialogAddAvatar';
@@ -45,7 +44,6 @@ import { ChatStoreService } from './services/chat-store.service';
         HomeComponent,
         ChatRoomComponent,
         DetailsBotComponent,
-        FriendsListComponent,
         RoomsListComponent,
         DialogOverviewExampleDialog,
         DialogEmojiList,
@@ -55,7 +53,6 @@ import { ChatStoreService } from './services/chat-store.service';
         HomeComponent,
         ChatRoomComponent,
         DetailsBotComponent,
-        FriendsListComponent,
         RoomsListComponent,
     ],
     entryComponents: [
