@@ -14,11 +14,13 @@ Stack
 - Angular 5
 - Typescript
 - Angular CLI
-- Angular Material
+- Angular Material 2
 - Firebase SDK with OAuth authentication
 - Firebase SDK with Realtime Database
+- Firebase SDK with Storage
 - RxJS
 - SASS
+- Circle CI
 
 ## DEMO
 Live DEMO [here](https://alice-1d9df.firebaseapp.com/)!
