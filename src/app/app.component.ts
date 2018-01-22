@@ -8,6 +8,7 @@ import { AuthService } from './auth';
     <app-header
       [user_name]="auth.user_name$ | async"
       [authenticated]="auth.authenticated$ | async"
+      (admin)="admin()"
       (signOut)="logout()"></app-header>
     <router-outlet></router-outlet>
   `
@@ -19,6 +20,10 @@ export class AppComponent {
   logout() {
     this.auth.signOut();
     this.router.navigate(['/login']);
+  }
+
+  admin() {
+    this.router.navigate(['/admin']);
   }
 }
 

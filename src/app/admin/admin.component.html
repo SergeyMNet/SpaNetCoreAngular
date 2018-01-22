@@ -1,0 +1,19 @@
+<!--component html goes here -->
+
+<h1>Statistics</h1>
+<hr>
+
+<div>
+    <div class="list">
+        <mat-selection-list>
+            <mat-list-option *ngFor="let chat of (chats_names$ | async)">
+                {{chat}}
+            </mat-list-option>
+        </mat-selection-list>
+    </div>
+
+    <div class="chart">
+        <canvas baseChart [data]="pieChartData" [labels]="(chats_names$ | async)" [chartType]="pieChartType" (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)"></canvas>
+    </div>
+</div>

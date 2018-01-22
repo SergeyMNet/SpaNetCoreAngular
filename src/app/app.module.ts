@@ -10,6 +10,7 @@ import { CustomMaterialModule } from './material.module';
 import { FirebaseModule } from './firebase';
 import { AuthModule } from './auth';
 import { HomeModule } from './home/home.module';
+import { AdminModule } from './admin/admin.module';
 
 // components
 import { AppComponent } from './app.component';
@@ -32,8 +33,9 @@ import { HeaderComponent } from './header/header.component';
     CustomMaterialModule,
     RouterModule.forRoot([], {useHash: false}),
     FirebaseModule,
+    AdminModule,
     AuthModule,
-    HomeModule
+    HomeModule,
   ]
 })
 export class AppModule { }

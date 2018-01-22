@@ -1,8 +1,10 @@
 <mat-toolbar color="primary">
-    <span><mat-icon class="mat-18">forum</mat-icon> Avatar-Chat</span>
+    <span class="home-link" routerLink="chat"><mat-icon class="mat-18">forum</mat-icon> Avatar-Chat</span>
 
     <!-- This fills the remaining space of the current row -->
     <span class="example-fill-remaining-space"></span>
+
+    <button *ngIf="authenticated" mat-button (click)="admin.emit()"><mat-icon>insert_chart</mat-icon> Statistics</button>
 
     <button *ngIf="authenticated" mat-button [matMenuTriggerFor]="menu">        
             <mat-icon>perm_identity</mat-icon>
