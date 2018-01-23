@@ -2,16 +2,39 @@
 .chartjs-render-monitor {
     animation: 10s;
     margin: 10px;
+    width: 100%;
 }
-
-h1{
+.head{
+    display: inline-flex;
+    width: 100%;
     color: #505050;
+    h1{
+        margin: 0px;
+        margin-top: 25px;
+        margin-left: 20px;
+    }
+    .search-input{
+        width: 100%;
+        margin: 0px 30px;
+        input{
+            font-size: 35px;
+            padding-left: 10px;
+        }
+    }
 }
 
 .list {
     width: 40%;
     float: left;
+    
+    /deep/ mat-icon{
+        color: #505050;
+    }
+    mat-list-item:hover{
+        background-color: #f3f3f3;
+    }
 }
+
 
 .chart{
     width: 50%;

@@ -18,9 +18,16 @@ export class AdminEffects {
         .switchMap(() => this.fcs.getChatsNames())
         .map(chats => this.adminActions.loadChatsSuccess(chats));
 
-    @Effect() loadMessagesCount$ = this.update$
-        .ofType(AdminActions.LOAD_MESSAGES_COUNT)
-        .map(action => action.payload)
-        .switchMap(messages => this.fcs.getMessages(messages))
-        .map(messages => this.adminActions.loadMessagesCountSuccess(messages));
+
+    @Effect() editChat$ = this.update$
+        .ofType(AdminActions.EDIT_CHAT)
+        .switchMap(chat => this.fcs.editChat(chat))
+        .map(chat => this.adminActions.editChatSuccess(chat));
+
+    @Effect() deleteChat$ = this.update$
+        .ofType(AdminActions.DELETE_CHAT)
+        .switchMap(action => this.fcs.deleteChat(action.payload))
+        .map(chat => this.adminActions.deleteChatSuccess(chat));
+
+
 }
