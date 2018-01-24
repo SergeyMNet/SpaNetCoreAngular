@@ -13,8 +13,13 @@ export class AdminActions {
     static EDIT_CHAT_SUCCESS = '[Chat] Edit Chats Success';
 
     static DELETE_CHAT = '[Chat] Delete Chats';
-    static  DELETE_CHAT_SUCCESS = '[Chat] Delete Chats Success';
+    static DELETE_CHAT_SUCCESS = '[Chat] Delete Chats Success';
 
+    static UNDO_DEL_CHAT = '[Chat] Undo del Chats';
+    static UNDO_EDIT_CHAT = '[Chat] Undo edit Chats';
+
+    static FILTER_CHAT = '[Chat] Filter Chats';
+    static UNDO_FILTER_CHAT = '[Chat] Undo Filter Chats';
 
     loadChats() {
         return {
@@ -58,4 +63,34 @@ export class AdminActions {
             payload: Chat
         };
     }
+
+    undoDelChat() {
+        return {
+            type: AdminActions.UNDO_DEL_CHAT,
+            payload: null
+        };
+    }
+
+    undoEditChat() {
+        return {
+            type: AdminActions.UNDO_EDIT_CHAT,
+            payload: null
+        };
+    }
+
+    filterChat(Chat: any) {
+        console.log(Chat);
+        return {
+            type: AdminActions.FILTER_CHAT,
+            payload: Chat
+        };
+    }
+
+    undoFilterChat() {
+        return {
+            type: AdminActions.UNDO_FILTER_CHAT,
+            payload: null
+        };
+    }
+
 }

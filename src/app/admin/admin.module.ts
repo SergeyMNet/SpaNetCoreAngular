@@ -19,6 +19,7 @@ import { AdminEffects } from './effects';
 
 // components
 import { AdminComponent } from './admin.component';
+import { DialogEditRoom } from './dialogEditRoom';
 
 // modules
 import { CustomMaterialModule } from '../material.module';
@@ -39,9 +40,13 @@ import { AdminRoutesModule } from './admin.routes';
     ],
     declarations: [
         AdminComponent,
+        DialogEditRoom
     ],
     exports: [
         AdminComponent,
+    ],
+    entryComponents: [
+        DialogEditRoom
     ],
     providers: [
         FireChatService,

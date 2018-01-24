@@ -1,12 +1,13 @@
 <!--component html goes here -->
 <div class="head">
     <h1>Statistics</h1>
-    <!-- <mat-input-container floatPlaceholder="auto" class="search-input">
-        <input matInput [(ngModel)]="modelName" type="text" required placeholder="">
+    <mat-input-container floatPlaceholder="auto" class="search-input">
+        <input #searchBox matInput (keyup)="search(searchBox.value)" type="text" required placeholder="" 
+            >
         <span matPrefix>
             <mat-icon class="mat-18">search</mat-icon>
         </span>
-    </mat-input-container> -->
+    </mat-input-container>
 </div>
 <hr>
 
@@ -16,7 +17,7 @@
             <mat-list-item *ngFor="let chat of (chats_names$ | async)">
                 <mat-icon matListIcon>chat</mat-icon>
                 <h3 matLine> {{chat}} </h3>
-                <button mat-icon-button (click)="onClick">
+                <button mat-icon-button (click)="editChat(chat)">
                     <mat-icon class="mat-18">edit</mat-icon>
                 </button>
                 <button mat-icon-button (click)="delChat(chat)">
@@ -27,8 +28,6 @@
     </div>
 
     <div *ngIf="isReady"  class="chart">
-        <canvas baseChart [data]="chats_counts" [labels]="chats_names" [chartType]="pieChartType" 
-            (chartHover)="chartHovered($event)"
-            (chartClick)="chartClicked($event)"></canvas>
+        <canvas baseChart [data]="chats_counts" [labels]="(chats_names$ | async)" [chartType]="pieChartType"></canvas>
     </div>
 </div>

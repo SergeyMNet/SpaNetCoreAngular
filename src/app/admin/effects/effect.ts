@@ -13,20 +13,23 @@ export class AdminEffects {
         private fcs: FireChatService,
     ) {}
 
-    @Effect() loadChats$ = this.update$
+    @Effect()
+    loadChats$ = this.update$
         .ofType(AdminActions.LOAD_CHATS)
         .switchMap(() => this.fcs.getChatsNames())
         .map(chats => this.adminActions.loadChatsSuccess(chats));
 
 
-    @Effect() editChat$ = this.update$
+    @Effect()
+    editChat$ = this.update$
         .ofType(AdminActions.EDIT_CHAT)
-        .switchMap(chat => this.fcs.editChat(chat))
+        // TODO: add api for edit chat
         .map(chat => this.adminActions.editChatSuccess(chat));
 
-    @Effect() deleteChat$ = this.update$
+    @Effect()
+    deleteChat$ = this.update$
         .ofType(AdminActions.DELETE_CHAT)
-        .switchMap(action => this.fcs.deleteChat(action.payload))
+        // .switchMap(action => this.fcs.deleteChat(action))
         .map(chat => this.adminActions.deleteChatSuccess(chat));
 
 

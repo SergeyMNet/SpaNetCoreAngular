@@ -1,0 +1,13 @@
+<div style="text-align: center;">
+    <mat-input-container floatPlaceholder="auto"
+                         dividerColor="primary">
+        <input matInput [(ngModel)]="data"
+               type="text"
+               required
+               placeholder="Chat-room">
+    </mat-input-container>
+</div>
+<div style="text-align: center;">
+    <button mat-raised-button (click)="save()" color="primary">Save</button>
+    <button mat-raised-button (click)="cancel()">Cancel</button>
+</div>

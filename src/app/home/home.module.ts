@@ -27,7 +27,7 @@ import { HomeRoutesModule } from './home.routes';
 
 // services
 import { ChatService } from './services/chat.service';
-import { ChatStoreService } from './services/chat-store.service';
+
 
 
 @NgModule({
@@ -63,7 +63,6 @@ import { ChatStoreService } from './services/chat-store.service';
      ],
     providers: [
         ChatService,
-        ChatStoreService
     ]
 })
 export class HomeModule {
