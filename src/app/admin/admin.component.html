@@ -30,7 +30,6 @@
     <div *ngIf="isReady"  class="chart">
         <canvas baseChart [chartType]="pieChartType"
             [style.width]="100 + '%'"
-            
             [data]="(chats_counts$ | async)" 
             [labels]="(chats_names$ | async)" ></canvas>
     </div>

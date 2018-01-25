@@ -65,20 +65,21 @@ export default function (state = initialState, {type, payload}): ChatsState {
             };
         }
         case AdminActions.FILTER_CHAT: {
-            return {
-                all_chats: state.all_chats,
-                chats: state.all_chats.filter(chat => {
-                    return (chat.id as string).startsWith(payload);
-                  }),
-                old: null
-            };
-        }
-        case AdminActions.UNDO_FILTER_CHAT: {
-            return {
-                all_chats: state.all_chats,
-                chats: state.all_chats,
-                old: null
-            };
+            if (payload === '') {
+                return {
+                    all_chats: state.all_chats,
+                    chats: state.all_chats,
+                    old: null
+                };
+            } else {
+                return {
+                    all_chats: state.all_chats,
+                    chats: state.all_chats.filter(chat => {
+                        return chat.chat_name.startsWith(payload);
+                      }),
+                    old: null
+                };
+            }
         }
         default: {
             return state;

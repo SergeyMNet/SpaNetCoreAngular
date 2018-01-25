@@ -48,18 +48,15 @@ export class AdminComponent implements OnInit, OnDestroy {
         // ngrx
         this.store.dispatch(this.adminActions.loadChats());
 
-        // show Chart when all data ready
-        this.chats$.pipe(debounceTime(500), distinctUntilChanged()).subscribe(c => { this.isReady = c.length > 0; });
+        // updating Chart
+        this.chats$
+            .map(res => { this.isReady = false; return res; })
+            .map(res => { setTimeout(() => {this.isReady = res.length > 0; }, 500); })
+            .subscribe();
 
         // use search pipe
         this.searchTerms.pipe(debounceTime(300), distinctUntilChanged()).takeUntil(this.ngUnsubscribe)
-            .subscribe(s => {
-                if (s.length === 0) {
-                    this.store.dispatch(this.adminActions.undoFilterChat());
-                } else {
-                    this.store.dispatch(this.adminActions.filterChat(s));
-                }
-           });
+            .subscribe(s => { this.store.dispatch(this.adminActions.filterChat(s)); });
     }
 
     public search(s: string) {

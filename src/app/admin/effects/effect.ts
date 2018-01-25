@@ -30,7 +30,6 @@ export class AdminEffects {
         .switchMap(() => this.fcs.getChatsWithMessages())
         .map(c => this.adminActions.loadChatsSuccess(c));
 
-
     @Effect()
     editChat$ = this.update$
         .ofType(AdminActions.EDIT_CHAT)
