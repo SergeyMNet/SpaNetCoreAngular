@@ -1,9 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Effect, Actions } from '@ngrx/effects';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/skip';
+import 'rxjs/add/operator/takeUntil';
+import { Action } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
+import { empty } from 'rxjs/observable/empty';
+import { of } from 'rxjs/observable/of';
 
 import { AppState } from '../reducers';
 import { AdminActions } from '../actions';
 import { FireChatService } from '../services';
+
 
 @Injectable()
 export class AdminEffects {
@@ -16,8 +27,8 @@ export class AdminEffects {
     @Effect()
     loadChats$ = this.update$
         .ofType(AdminActions.LOAD_CHATS)
-        .switchMap(() => this.fcs.getChatsNames())
-        .map(chats => this.adminActions.loadChatsSuccess(chats));
+        .switchMap(() => this.fcs.getChatsWithMessages())
+        .map(c => this.adminActions.loadChatsSuccess(c));
 
 
     @Effect()

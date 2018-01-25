@@ -27,7 +27,8 @@ export class AdminActions {
         };
     }
 
-    loadChatsSuccess(Chats: any) {
+    loadChatsSuccess(Chats: any[]) {
+        console.log(Chats);
         return {
             type: AdminActions.LOAD_CHATS_SUCCESS,
             payload: Chats
@@ -78,11 +79,11 @@ export class AdminActions {
         };
     }
 
-    filterChat(Chat: any) {
-        console.log(Chat);
+    filterChat(search_term: string) {
+        console.log(search_term);
         return {
             type: AdminActions.FILTER_CHAT,
-            payload: Chat
+            payload: search_term
         };
     }
 

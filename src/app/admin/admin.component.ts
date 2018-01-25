@@ -2,21 +2,22 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatInput, MatSnackBar } from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 import {Store} from '@ngrx/store';
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operator/map';
+import 'rxjs/add/operator/takeUntil';
+
 
 import { AppState } from './reducers';
 import { AdminActions } from './actions';
-
 import { FireChatService } from './services/fire.service';
-import { Subject } from 'rxjs/Subject';
-import { fail } from 'assert';
-import { Subscription } from 'rxjs/Subscription';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-
 import { DialogEditRoom } from './dialogEditRoom';
-import { map } from 'rxjs/operator/map';
+
+
+import { ChatModel } from './admin.models';
 
 @Component({
-    moduleId: module.id,
     selector: 'app-admin',
     templateUrl: 'admin.component.html',
     styleUrls: ['admin.component.scss']
@@ -25,82 +26,73 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     // Pie Chart
     pieChartType = 'doughnut';
-    chats_names$: Observable<any[]>;
-    chats_counts: number[] = [];
+    chats$: Observable<ChatModel[]>;
+    chats_names$: Observable<string[]>;
+    chats_counts$: Observable<number[]>;
     isReady = false;
 
     private searchTerms = new Subject<string>();
-    private subs_chat: Subscription[] = [];
+    private ngUnsubscribe = new Subject();
 
     constructor(private store: Store<{reducer: AppState}>,
         private adminActions: AdminActions,
         private dialog: MatDialog,
         private undoSnackBar: MatSnackBar,
         private fcs: FireChatService) {
-        this.chats_names$ = this.store.select(s => s.reducer.admin_chats.chats);
+        this.chats$ = this.store.select(s => s.reducer.admin_chats.chats);
+        this.chats_names$ = this.chats$.map(chats => chats.map(c => c.chat_name));
+        this.chats_counts$ = this.chats$.map(chats => chats.map(c => c.messages_count));
     }
 
     ngOnInit() {
         // ngrx
         this.store.dispatch(this.adminActions.loadChats());
 
-        // get count chat messages
-        this.subs_chat.push(this.store.select(s => s.reducer.admin_chats.chats).subscribe(r => {
-            this.isReady = false;
-            this.chats_counts = [];
-            r.forEach(url => {
-                this.subs_chat.push(this.fcs.getMessagesCount(url).subscribe(count => {
-                    this.chats_counts.push(count);
-                    this.isReady = this.chats_counts.length === r.length;
-                }));
-            });
-        }));
+        // show Chart when all data ready
+        this.chats$.pipe(debounceTime(500), distinctUntilChanged()).subscribe(c => { this.isReady = c.length > 0; });
 
         // use search pipe
-        this.subs_chat.push(this.searchTerms.pipe(debounceTime(300), distinctUntilChanged())
+        this.searchTerms.pipe(debounceTime(300), distinctUntilChanged()).takeUntil(this.ngUnsubscribe)
             .subscribe(s => {
                 if (s.length === 0) {
                     this.store.dispatch(this.adminActions.undoFilterChat());
                 } else {
                     this.store.dispatch(this.adminActions.filterChat(s));
                 }
-           }));
+           });
     }
 
     public search(s: string) {
         this.searchTerms.next(s);
     }
 
-    public editChat(chat: string) {
-        const dialogRef = this.dialog.open(DialogEditRoom, {
-            width: '250px',
-            data: chat
+    public editChat(chat: ChatModel) {
+        const dialogRef = this.dialog.open(DialogEditRoom, { width: '250px',
+            data:  Object.assign({}, chat)
         });
 
-        this.subs_chat.push(dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().takeUntil(this.ngUnsubscribe).subscribe(result => {
             if (result !== undefined) {
                 this.store.dispatch(this.adminActions.editChat({old: chat, new: result}));
                 this.showSnack('Chat has edited!', this.adminActions.undoEditChat());
             }
-        }));
+        });
     }
 
-    public delChat(chat: string) {
+    public delChat(chat: ChatModel) {
         this.store.dispatch(this.adminActions.deleteChat(chat));
         this.showSnack('Chat has deleted!', this.adminActions.undoDelChat());
     }
 
     private showSnack(message: string, action: any) {
         const snack = this.undoSnackBar.open(message, 'Undo', { duration: 5000, horizontalPosition: 'center' });
-        this.subs_chat.push(snack.afterDismissed().subscribe(() => {
-
-        }));
-        this.subs_chat.push(snack.onAction().subscribe(() => {
+        snack.afterDismissed().takeUntil(this.ngUnsubscribe).subscribe(() => {});
+        snack.onAction().takeUntil(this.ngUnsubscribe).subscribe(() => {
             this.store.dispatch(action);
-        }));
+        });
     }
 
     ngOnDestroy() {
-        this.subs_chat.forEach(s => { s.unsubscribe(); });
+        this.ngUnsubscribe.unsubscribe();
     }
 }

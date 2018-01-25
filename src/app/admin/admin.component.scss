@@ -24,7 +24,7 @@
 }
 
 .list {
-    width: 40%;
+    width: 30%;
     float: left;
     
     /deep/ mat-icon{
@@ -38,4 +38,5 @@
 
 .chart{
     float: right;
+    width: 70%;
 }

@@ -1,10 +1,10 @@
 import { AdminActions } from '../actions';
-
+import { ChatModel } from '../admin.models';
 
 export type ChatsState =
     {
-        all_chats: any[]
-        chats: any[],
+        all_chats: ChatModel[]
+        chats: ChatModel[],
         old: any
     };
 
@@ -68,7 +68,7 @@ export default function (state = initialState, {type, payload}): ChatsState {
             return {
                 all_chats: state.all_chats,
                 chats: state.all_chats.filter(chat => {
-                    return (chat as string).startsWith(payload);
+                    return (chat.id as string).startsWith(payload);
                   }),
                 old: null
             };

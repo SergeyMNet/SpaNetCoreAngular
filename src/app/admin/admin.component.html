@@ -14,9 +14,9 @@
 <div>
     <div class="list">
         <mat-list >
-            <mat-list-item *ngFor="let chat of (chats_names$ | async)">
+            <mat-list-item *ngFor="let chat of (chats$ | async)">
                 <mat-icon matListIcon>chat</mat-icon>
-                <h3 matLine> {{chat}} </h3>
+                <h3 matLine> {{chat.chat_name}} ({{chat.messages_count}}) </h3>
                 <button mat-icon-button (click)="editChat(chat)">
                     <mat-icon class="mat-18">edit</mat-icon>
                 </button>
@@ -28,6 +28,10 @@
     </div>
 
     <div *ngIf="isReady"  class="chart">
-        <canvas baseChart [data]="chats_counts" [labels]="(chats_names$ | async)" [chartType]="pieChartType"></canvas>
+        <canvas baseChart [chartType]="pieChartType"
+            [style.width]="100 + '%'"
+            
+            [data]="(chats_counts$ | async)" 
+            [labels]="(chats_names$ | async)" ></canvas>
     </div>
 </div>

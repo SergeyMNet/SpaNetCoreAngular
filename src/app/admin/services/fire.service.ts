@@ -6,6 +6,11 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/observable/zip';
+import { Subscriber } from 'rxjs/Subscriber';
+import { Observer } from 'firebase';
+import { ChatModel } from '../admin.models';
+
 
 
 const files_url = '/images/';
@@ -19,58 +24,34 @@ export class FireChatService {
         private database: AngularFireDatabase) {
     }
 
-    public getChats(): Observable<any[]> {
-
-        return new Observable(o => {
-            this.getChatsNames().subscribe(names => {
-                const all = [];
-                names.forEach(url => {
-
-                    this.getMessagesCount(url).subscribe(resp => {
-                        all.push({
-                            chat_name: url,
-                            messages_count: resp
-                        });
-                        o.next(all);
-                    });
-                });
-                o.next(all);
-        });
-    });
+    // get Chats names and Messages count
+    public getChatsWithMessages(): Observable<Array<ChatModel>> {
+        return this.getChatsNames()
+            .switchMap(names => this.getCountMessages(names));
     }
-
-    public getChatsNames(): Observable<any[]> {
+    private getChatsNames(): Observable<string[]> {
         return this.database.object(chat_rooms_url)
             .valueChanges().map(resp => {
                 return Object.keys(resp); });
     }
-
-    public getMessagesCount(chat_url: string): Observable<number> {
+    private getCountMessages(names: string[]): Observable<Array<ChatModel>> {
+        const all = [];
+        names.forEach(url => {
+            all.push(this.getMessagesCount(url));
+        });
+        return Observable.zip(...all);
+    }
+    private getMessagesCount(chat_url: string): Observable<ChatModel> {
         console.log('getMessagesCount ' + chat_url);
         return this.database.list<any>(chat_rooms_url + chat_url)
             .valueChanges().map((resp) => {
-                return resp.length; });
-    }
-
-    public getAllMessagesCount(chat_urls: string[]): Observable<any> {
-        return new Observable(o => {
-            const all = [];
-            chat_urls.forEach(url => {
-            console.log('start ' + url);
-            this.getMessagesCount(url).subscribe(resp => {
-                    all.push(resp);
-                    // all.push({
-                    //     chat_name: url,
-                    //     message_count: resp
-                    // });
-                });
+                return new ChatModel(chat_url, resp.length);
             });
-            console.log(all);
-        o.next(all);
-        });
     }
 
 
+
+    // todo: add server method Edit Chat
     public editChat(chat: any): Promise<any> {
         console.log('service edit');
         console.log(chat.payload.new);
@@ -78,6 +59,7 @@ export class FireChatService {
 
         return null;
     }
+
 
     public deleteChat(chat: any): Promise<any> {
         console.log('service remove ' + chat);

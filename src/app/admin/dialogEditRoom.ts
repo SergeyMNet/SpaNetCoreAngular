@@ -7,7 +7,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
         <div style="text-align: center;">
             <mat-input-container floatPlaceholder="auto"
                                  dividerColor="primary">
-                <input matInput [(ngModel)]="data"
+                <input matInput [(ngModel)]="data.chat_name"
                        type="text"
                        required
                        placeholder="Chat-room">
