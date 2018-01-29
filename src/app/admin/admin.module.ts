@@ -14,7 +14,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 // redux store
 import reducer from './reducers';
 import { AdminActions } from './actions';
-import { FireChatService } from './services';
+import { FireChatService, SignalrService } from './services';
 import { AdminEffects } from './effects';
 
 // components
@@ -50,6 +50,7 @@ import { AdminRoutesModule } from './admin.routes';
     ],
     providers: [
         FireChatService,
+        SignalrService,
         AdminActions
     ]
 })

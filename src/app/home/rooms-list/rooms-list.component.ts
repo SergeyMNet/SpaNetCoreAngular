@@ -12,7 +12,7 @@ import { DialogOverviewExampleDialog } from './dialogs/dialogOverviewExampleDial
 export class RoomsListComponent implements OnInit {
 
     sel_room: Room = new Room();
-    @Input() sel_room_url: string = '';
+    @Input() sel_room_url = '';
     @Input() rooms: Room[] = [];
     @Output() addRoom: EventEmitter<any> = new EventEmitter();
     @Output() selectRoom: EventEmitter<any> = new EventEmitter();

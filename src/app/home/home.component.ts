@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AuthService } from '../auth';
 import { names_list, images_list } from './names';
-import { Avatar, Room, Message, NewMessage, Upload } from './chat.models';
+import { Avatar, Room, Message, Upload } from './chat.models';
 import { ChatService } from './services/chat.service';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -19,12 +19,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     names = names_list;
     images = images_list;
 
-    sub_user_id: Subscription;
-    sub_avatars: Subscription;
-    sub_rooms: Subscription;
-    sub_messages: Subscription;
-    sub_new_messages: Subscription;
-
+    private ngUnsubscribe = new Subject();
     user_id = '';
     sel_avatar = 0;
     avatars: Avatar[] = [];
@@ -45,7 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.subscribeToChat();
 
         // #1 get user ID
-        this.sub_user_id = this.auth.uid$.subscribe(
+        this.auth.uid$.takeUntil(this.ngUnsubscribe).subscribe(
             // #2 get avatars by uid
             uid => {
                 this.user_id = uid;
@@ -59,7 +54,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     subscribeToChat() {
 
         // subscribe to avatars
-        this.sub_avatars = this.chatService.avatars$.subscribe(
+        this.chatService.avatars$.takeUntil(this.ngUnsubscribe).subscribe(
             (resp) => {
                 console.log(resp);
                 // sort by time
@@ -81,7 +76,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         );
 
         // subscribe to rooms
-        this.sub_rooms = this.chatService.rooms_keys$.subscribe(
+        this.chatService.rooms_keys$.takeUntil(this.ngUnsubscribe).subscribe(
             (resp) => {
                 this.all_rooms = resp.map(name => new Room(name) );
                 this.subscribeToRooms();
@@ -89,12 +84,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         );
 
         // subscribe to new messages
-        this.sub_messages = this.chatService.messages$.subscribe(
+        this.chatService.messages$.takeUntil(this.ngUnsubscribe).subscribe(
             (resp) => { this.messages = resp; }
         );
 
         // subscribe to new in room
-        this.sub_new_messages = this.chatService.newMessageInRoom$.subscribe(
+        this.chatService.newMessageInRoom$.takeUntil(this.ngUnsubscribe).subscribe(
             (url) => {
                 let i = 0;
                 this.avatars.forEach(bot => {
@@ -116,14 +111,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
 // Add new message
-    addNewMessage(message: NewMessage) {
-        if (message.attachFile !== null) {
-            // send img to chat
-            this.chatService.pushUpload(message);
-        } else {
-            // send text to chat
-            this.chatService.addMessage(message);
-        }
+    addNewMessage(message: Message) {
+        this.chatService.addMessage(message);
     }
 
 
@@ -199,11 +188,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         console.log('-onDestroy-');
-        this.sub_user_id.unsubscribe();
-        this.sub_avatars.unsubscribe();
-        this.sub_rooms.unsubscribe();
-        this.sub_messages.unsubscribe();
-        this.sub_new_messages.unsubscribe();
+        this.ngUnsubscribe.unsubscribe();
         this.chatService.ngOnDestroy();
     }
 }

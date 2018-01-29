@@ -12,4 +12,6 @@ export class HeaderComponent {
     @Input() user_name: string;
     @Output() signOut = new EventEmitter(false);
     @Output() admin = new EventEmitter();
+
+    selected_server = 'Firebase';
 }

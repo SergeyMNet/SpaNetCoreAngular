@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatInput } from '@angular/mat
 import { UUID } from 'angular2-uuid';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
-import { Message, MessageApi, NewMessage, Upload } from '../chat.models';
+import { Message, Upload } from '../chat.models';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DialogEmojiList } from './dialogs/dialogEmojiList';
 
@@ -23,11 +23,12 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
     @Input() messages: Message[];
     @Output() addNewMessage: EventEmitter<any> = new EventEmitter();
     @Output() addNewFileMessage: EventEmitter<any> = new EventEmitter();
-    private newMessage: NewMessage = new NewMessage();
+    private newMessage: Message = new Message();
     private selectedFiles: FileList | null;
     private currentUpload: Upload;
 
     constructor(public dialog: MatDialog) {
+        this.newMessage.text = '';
     }
 
     ngOnInit() {
@@ -39,12 +40,14 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
     }
 
     addMessage(attach: Upload = null) {
-        this.newMessage.fromAvatar = this.curent_user_name;
-        this.newMessage.fromAvatarImg = this.curent_user_img;
-        this.newMessage.toRoom = this.chat_url;
+        this.newMessage.from = this.curent_user_name;
+        this.newMessage.photo = this.curent_user_img;
+        this.newMessage.room_id = this.chat_url;
         this.newMessage.attachFile = attach;
+        this.newMessage.date_utc_string = new Date().toUTCString();
         this.addNewMessage.emit(this.newMessage);
-        this.newMessage = new NewMessage();
+        this.newMessage = new Message();
+        this.newMessage.text = '';
     }
 
     detectFiles($event: Event) {

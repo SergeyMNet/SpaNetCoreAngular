@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatInput, MatSnackBar } from '@angular/material';
-import {Observable} from 'rxjs/Observable';
-import {Store} from '@ngrx/store';
+import { BaseChartDirective } from 'ng2-charts/ng2-charts';
+import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
@@ -11,7 +12,7 @@ import 'rxjs/add/operator/takeUntil';
 
 import { AppState } from './reducers';
 import { AdminActions } from './actions';
-import { FireChatService } from './services/fire.service';
+import { FireChatService, SignalrService } from './services';
 import { DialogEditRoom } from './dialogEditRoom';
 
 
@@ -24,6 +25,14 @@ import { ChatModel } from './admin.models';
 })
 export class AdminComponent implements OnInit, OnDestroy {
 
+    @ViewChild(BaseChartDirective) private _chart;
+
+    // lineChart
+    public lineChartData: Array<any> = [];
+    public lineChartLabels: Array<any> = [];
+    public lineChartType = 'line';
+    public lineChartOptions: any = { responsive: true };
+
     // Pie Chart
     pieChartType = 'doughnut';
     chats$: Observable<ChatModel[]>;
@@ -33,6 +42,9 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     private searchTerms = new Subject<string>();
     private ngUnsubscribe = new Subject();
+
+    public testMessages = [];
+    public testData = 0;
 
     constructor(private store: Store<{reducer: AppState}>,
         private adminActions: AdminActions,

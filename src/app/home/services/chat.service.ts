@@ -5,9 +5,10 @@ import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/fires
 import { Observable, Subscribable } from 'rxjs/Observable';
 import * as firebase from 'firebase';
 
-import { Message, MessageApi, NewMessage, ChatRoom, Room, Avatar, AvatarApi, Upload } from '../chat.models';
+import { Message, ChatRoom, Room, Avatar, Upload } from '../chat.models';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
+import { IChatService } from './ichat.interface';
 
 const files_url = '/images/';
 const chat_rooms_url = '/chat_rooms/';
@@ -15,11 +16,10 @@ const users_url = '/users/';
 
 
 @Injectable()
-export class ChatService implements OnDestroy {
+export class ChatService implements OnDestroy, IChatService {
 
     private subscribe_to_new_messages: Subscription;
-    private subscription_rooms: Subscription;
-    private subscriptions_to_chat_db: Subscription[] = [];
+    private ngUnsubscribe = new Subject();
     private chatRooms: ChatRoom[] = [];
 
     public avatars$: Subject<Avatar[]> = new Subject<Avatar[]>();
@@ -31,47 +31,41 @@ export class ChatService implements OnDestroy {
     private items: Observable<File[]>;
     progress: {percentage: number} = { percentage: 0 };
 
-    constructor(public database: AngularFireDatabase,
-                public store: AngularFirestore) {
+    constructor(private database: AngularFireDatabase,
+                private store: AngularFirestore) {
     }
 
-    public addMessage(message: NewMessage) {
+
+    public addMessage(message: Message) {
+
         // push new message to server
-        this.database.list(message.toRoom).push(
-            {
-                id: UUID.UUID(),
-                date_message: new Date().toUTCString(),
-                attach: message.attach,
-                message: message.text,
-                photo: message.fromAvatarImg,
-                username: message.fromAvatar,
-                room_id: message.toRoom
-            });
+        if (message.attachFile !== null) {
+            this.database.list(message.room_id).push(message);
+        } else {
+            this.pushUpload(message);
+        }
     }
 
-
-    public pushUpload(message: NewMessage) {
+    private pushUpload(message: Message) {
         const upload: Upload = message.attachFile;
-
-
         const storageRef = firebase.storage().ref();
         const uploadTask = storageRef.child(`${files_url}/${message.attachFile.file.name}`).put(message.attachFile.file);
 
         uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
           (snapshot) => {
-            // in progress
+            // TODO: show progress loading
             const snap = snapshot as firebase.storage.UploadTaskSnapshot;
             this.progress.percentage = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
           },
           (error) => {
-            // fail
+            // todo: show fail
             console.error(error);
           },
           () => {
             // success
             message.attach = uploadTask.snapshot.downloadURL;
             console.log(uploadTask.snapshot.downloadURL);
-            this.addMessage(message);
+            this.database.list(message.room_id).push(message);
           }
         );
       }
@@ -79,25 +73,26 @@ export class ChatService implements OnDestroy {
 //#region Avatars CRUD
 
     public getAvatars(user_id: string) {
-        this.subscription_rooms = this.database.list<AvatarApi>(users_url + user_id)
-            .valueChanges().subscribe(users => {
+        this.database.list<Avatar>(users_url + user_id)
+            .valueChanges().takeUntil(this.ngUnsubscribe).subscribe(users => {
                 console.log('get users');
                 console.log(users);
-                this.avatars$.next(users.map(u => {
-                    const av = new Avatar();
-                    av.id = u.id;
-                    av.uid = u.uid;
-                    av.name = u.name;
-                    av.img = u.img;
-                    av.sel_room = u.sel_room;
-                    av.create_date = u.create_date;
-                    return av;
-                }));
+                this.avatars$.next(users
+                    .map(u => {
+                        const av = new Avatar();
+                        av.id = u.id;
+                        av.uid = u.uid;
+                        av.name = u.name;
+                        av.img = u.img;
+                        av.sel_room = u.sel_room;
+                        av.create_date = u.create_date;
+                        return av;
+                    })
+                );
             });
     }
 
     public addAvatar(avatar: Avatar) {
-
         this.database.database.ref(users_url + avatar.uid + '/' + avatar.id).set(
             {
                 id: avatar.id,
@@ -118,23 +113,18 @@ export class ChatService implements OnDestroy {
 //#region Rooms CRUD
 
     public getRooms() {
-        this.subscription_rooms = this.database.object('/chat_rooms/')
-            .valueChanges().subscribe(rooms => {
+        this.database.object('/chat_rooms/')
+            .valueChanges().takeUntil(this.ngUnsubscribe).subscribe(rooms => {
                 if (rooms !== null) {
                     const keys = Object.keys(rooms);
                     this.rooms_keys$.next(keys);
                 } else {
                     // add init message
-                    this.database.list(chat_rooms_url + 'main').push(
-                        {
-                            id: UUID.UUID(),
-                            date_message: new Date().toUTCString(),
-                            attach: '',
-                            message: 'init chat',
-                            photo: '',
-                            username: 'admin',
-                            room_id: ''
-                        });
+                    const initMessage = new Message();
+                    initMessage.from = 'admin';
+                    initMessage.date_utc_string = new Date().toUTCString();
+                    initMessage.text = 'init chat';
+                    this.database.list(chat_rooms_url + 'main').push(initMessage);
                 }
             });
     }
@@ -151,40 +141,24 @@ export class ChatService implements OnDestroy {
             room.messages$ = new Subject<Message[]>();
 
             // subscribe to curent chat
-            const s = this.database.list<MessageApi>(chat_url)
-                .valueChanges(['child_added']).subscribe(
+            const s = this.database.list<Message>(chat_url)
+                .valueChanges(['child_added']).takeUntil(this.ngUnsubscribe).subscribe(
                 (resp) => {
                     this.newMessageInRoom$.next(this.getRoom(room).url);
                     // add all messages to chat
                     room.messages$.next(resp.map(item => {
                         room.hasNewMessage = true;
-                        return <Message>{
-                            id: item.id,
-                            room_id: chat_url,
-                            from: item.username,
-                            attach: item.attach,
-                            photo: item.photo,
-                            text: item.message,
-                            time: new Date(item.date_message)
-                        };
+                        item.time = new Date(item.date_utc_string);
+                        return item;
                     }));
 
                     room.messagesArray = resp.map(item => {
                         room.hasNewMessage = true;
-                        return <Message>{
-                            id: item.id,
-                            room_id: chat_url,
-                            from: item.username,
-                            photo: item.photo,
-                            text: item.message,
-                            attach: item.attach,
-                            time: new Date(item.date_message)
-                        };
+                        item.time = new Date(item.date_utc_string);
+                        return item;
                     });
                 });
 
-            // save subscription
-            this.subscriptions_to_chat_db.push(s);
             // save room
             this.chatRooms.push(room);
         }
@@ -215,15 +189,10 @@ export class ChatService implements OnDestroy {
     ngOnDestroy() {
         console.log('-Unscribe service-');
         this.chatRooms = [];
+        this.ngUnsubscribe.unsubscribe();
         if (this.subscribe_to_new_messages !== undefined && !this.subscribe_to_new_messages.closed) {
             this.subscribe_to_new_messages.unsubscribe();
         }
-        if (this.subscription_rooms !== undefined && !this.subscription_rooms.closed) {
-            this.subscription_rooms.unsubscribe();
-        }
-        this.subscriptions_to_chat_db.forEach(sub => {
-            sub.unsubscribe();
-        });
     }
 
 

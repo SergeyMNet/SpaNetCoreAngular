@@ -18,15 +18,12 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { DialogEmojiList } from './chat-room/dialogs/dialogEmojiList';
 
-// redux store
-import { chatStore } from '../store/reducer';
-
 // modules
 import { CustomMaterialModule } from '../material.module';
 import { HomeRoutesModule } from './home.routes';
 
 // services
-import { ChatService } from './services/chat.service';
+import { ChatService, LocalChatService } from './services';
 
 
 
@@ -63,6 +60,7 @@ import { ChatService } from './services/chat.service';
      ],
     providers: [
         ChatService,
+        LocalChatService
     ]
 })
 export class HomeModule {

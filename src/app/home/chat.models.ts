@@ -4,17 +4,6 @@ import { UUID } from 'angular2-uuid';
 
 const main_url = '/chat_rooms/';
 
-
-export class AvatarApi {
-    id: string;
-    uid: string;
-    name: string;
-    img: string;
-    create_date: number;
-    sel_room = '/chat_rooms/main';
-}
-
-
 export class Avatar {
     id: string;
     uid: string;
@@ -26,32 +15,16 @@ export class Avatar {
 }
 
 export class Message {
-    id: string;
+    id: string = UUID.UUID();
     room_id: string;
     from: string;
     photo: string;
+    date_utc_string: string;
     time: Date;
     text: string;
     attach: string;
-  }
-
-export class MessageApi {
-    attach: string;
-    date_message: string;
-    id: string;
-    message: string;
-    photo: string;
-    username: string;
-}
-
-export class NewMessage {
-    fromAvatar: string;
-    fromAvatarImg: string;
-    toRoom: string;
-    text = '';
-    attach = '';
     attachFile: Upload;
-}
+  }
 
 export class Room {
     id: string;

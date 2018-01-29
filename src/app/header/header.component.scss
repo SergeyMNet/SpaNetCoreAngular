@@ -7,3 +7,22 @@
 .home-link {
   cursor: pointer;
 }
+
+.server-select {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+
+/deep/ mat-form-field {
+  color:  white;
+  font-size: 16px;
+}
+
+/deep/ .mat-select-value{
+  color:  white;
+  
+}
+/deep/ .mat-select-trigger {
+  width: 85%;
+  font-size: 18px;
+}

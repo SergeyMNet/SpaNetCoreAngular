@@ -1,9 +1,12 @@
 import { FireChatService } from './fire.service';
+import { SignalrService } from './signalr.service';
 
 export {
-    FireChatService
+    FireChatService,
+    SignalrService
 };
 
 export default [
-    FireChatService
+    FireChatService,
+    SignalrService
 ];

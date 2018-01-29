@@ -8,19 +8,18 @@ namespace ChatServer
 {
     public class TestHub : Hub
     {
-        public Task IncrementCounter()
-        {
+        bool start = false;
 
-            List<String> ConnectionIDToIgnore = new List<String>();
-            ConnectionIDToIgnore.Add(Context.ConnectionId);
-            return Clients.AllExcept(ConnectionIDToIgnore).InvokeAsync("IncrementCounter");
-        }
-
-        public Task DecrementCounter()
-        {
-            List<String> ConnectionIDToIgnore = new List<String>();
-            ConnectionIDToIgnore.Add(Context.ConnectionId);
-            return Clients.AllExcept(ConnectionIDToIgnore).InvokeAsync("DecrementCounter");
+        public async Task GetRandomData()
+        {   
+            if(!start)
+            do
+            {
+                start = true;
+                var r = new Random();
+                await Clients.All.InvokeAsync("getRandomData", r.Next(1, 10));
+                await Task.Delay(1000);
+            } while (start);
         }
 
 

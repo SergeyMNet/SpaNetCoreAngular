@@ -1,6 +1,17 @@
 <mat-toolbar color="primary">
     <span class="home-link" routerLink="chat"><mat-icon class="mat-18">forum</mat-icon> Avatar-Chat</span>
 
+
+    <div class="server-select">
+    <mat-form-field>
+        <i class="fas fa-globe"></i>
+        <mat-select [(value)]="selected_server">
+            <mat-option value="Firebase"><i class="fas fa-fire"></i> Firebase</mat-option>
+            <mat-option value="SingnalR"><i class="fas fa-server"></i> SingnalR</mat-option>
+        </mat-select>
+    </mat-form-field>
+    </div>
+
     <!-- This fills the remaining space of the current row -->
     <span class="example-fill-remaining-space"></span>
 
