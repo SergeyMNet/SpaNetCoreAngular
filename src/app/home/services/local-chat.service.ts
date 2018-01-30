@@ -22,8 +22,7 @@ export class LocalChatService implements OnInit, IChatService {
 
     private chatRooms: ChatRoom[] = [];
     private subscribe_to_new_messages: Subscription;
-    avatars$: Subject<Avatar[]>;
-    rooms_keys$: Subject<string[]>;
+
     newMessageInRoom$: Subject<string>;
     messages$: Subject<Message[]>;
 
@@ -48,11 +47,13 @@ export class LocalChatService implements OnInit, IChatService {
           .catch(err => console.error(err));
     }
 
-    public getAvatars(user_id: string) {
+    public getAvatars(user_id: string): Observable<Array<Avatar>> {
         const to = hub_url + users_url + user_id;
+        const avatars$ = new Subject<Array<Avatar>>();
         this._hubConnection.on(to, resp => {
-            this.avatars$.next(resp);
+            avatars$.next(resp);
         });
+        return avatars$;
     }
 
     public addAvatar(avatar: Avatar) {
@@ -69,11 +70,13 @@ export class LocalChatService implements OnInit, IChatService {
           .catch(err => console.error(err));
     }
 
-    public getRooms() {
+    public getRooms(): Observable<Array<string>> {
         const to = hub_url + chat_rooms_url + 'keys';
+        const rooms$ = new Subject<Array<string>>();
         this._hubConnection.on(to, keys => {
-            this.rooms_keys$.next(keys);
+            rooms$.next(keys);
         });
+        return rooms$;
     }
 
     public subscribeToChat(chat_url: string) {

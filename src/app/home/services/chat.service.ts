@@ -19,11 +19,9 @@ const users_url = '/users/';
 export class ChatService implements OnDestroy, IChatService {
 
     private subscribe_to_new_messages: Subscription;
-    private ngUnsubscribe = new Subject();
+    private ngUnsubscribeAll: Subscription[] = [];
     private chatRooms: ChatRoom[] = [];
 
-    public avatars$: Subject<Avatar[]> = new Subject<Avatar[]>();
-    public rooms_keys$: Subject<string[]> = new Subject<string[]>();
     public newMessageInRoom$: Subject<string> = new Subject<string>();
     public messages$: Subject<Message[]> = new Subject<Message[]>();
 
@@ -35,11 +33,11 @@ export class ChatService implements OnDestroy, IChatService {
                 private store: AngularFirestore) {
     }
 
-
+//#region Messages CRUD
     public addMessage(message: Message) {
 
         // push new message to server
-        if (message.attachFile !== null) {
+        if (message.attachFile === null) {
             this.database.list(message.room_id).push(message);
         } else {
             this.pushUpload(message);
@@ -69,15 +67,16 @@ export class ChatService implements OnDestroy, IChatService {
           }
         );
       }
+//#endregion
 
 //#region Avatars CRUD
 
-    public getAvatars(user_id: string) {
-        this.database.list<Avatar>(users_url + user_id)
-            .valueChanges().takeUntil(this.ngUnsubscribe).subscribe(users => {
+    public getAvatars(user_id: string): Observable<Array<Avatar>> {
+        return this.database.list<Avatar>(users_url + user_id)
+            .valueChanges().map(users => {
                 console.log('get users');
                 console.log(users);
-                this.avatars$.next(users
+                return users
                     .map(u => {
                         const av = new Avatar();
                         av.id = u.id;
@@ -87,8 +86,7 @@ export class ChatService implements OnDestroy, IChatService {
                         av.sel_room = u.sel_room;
                         av.create_date = u.create_date;
                         return av;
-                    })
-                );
+                });
             });
     }
 
@@ -112,12 +110,14 @@ export class ChatService implements OnDestroy, IChatService {
 
 //#region Rooms CRUD
 
-    public getRooms() {
-        this.database.object('/chat_rooms/')
-            .valueChanges().takeUntil(this.ngUnsubscribe).subscribe(rooms => {
+    public getRooms(): Observable<Array<string>> {
+        return this.database.object('/chat_rooms/')
+            .valueChanges().take(1).map(rooms => {
+                console.log('get rooms');
                 if (rooms !== null) {
                     const keys = Object.keys(rooms);
-                    this.rooms_keys$.next(keys);
+                    console.log(keys);
+                    return keys;
                 } else {
                     // add init message
                     const initMessage = new Message();
@@ -142,7 +142,7 @@ export class ChatService implements OnDestroy, IChatService {
 
             // subscribe to curent chat
             const s = this.database.list<Message>(chat_url)
-                .valueChanges(['child_added']).takeUntil(this.ngUnsubscribe).subscribe(
+                .valueChanges(['child_added']).subscribe(
                 (resp) => {
                     this.newMessageInRoom$.next(this.getRoom(room).url);
                     // add all messages to chat
@@ -159,6 +159,7 @@ export class ChatService implements OnDestroy, IChatService {
                     });
                 });
 
+            this.ngUnsubscribeAll.push(s);
             // save room
             this.chatRooms.push(room);
         }
@@ -187,16 +188,16 @@ export class ChatService implements OnDestroy, IChatService {
 
 
     ngOnDestroy() {
-        console.log('-Unscribe service-');
-        this.chatRooms = [];
-        this.ngUnsubscribe.unsubscribe();
-        if (this.subscribe_to_new_messages !== undefined && !this.subscribe_to_new_messages.closed) {
+        console.log('-Unscribe chat.service-');
+        this.ngUnsubscribeAll.forEach(uns => uns.unsubscribe());
+        if (this.subscribe_to_new_messages !== undefined) {
             this.subscribe_to_new_messages.unsubscribe();
         }
+        this.chatRooms = [];
     }
 
 
-    //#region helpers
+//#region helpers
     private hasRoomInArray(arr: ChatRoom[], val: string): boolean {
         return arr.some(function (arrVal) {
             return val === arrVal.room;

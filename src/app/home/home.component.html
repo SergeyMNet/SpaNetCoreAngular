@@ -1,4 +1,4 @@
-<mat-tab-group class="bot-tab-group" 
+<mat-tab-group *ngIf="avatars.length > 0"  class="bot-tab-group" 
         [ngClass]="new_for_avatars.join(' ')"
         (selectedTabChange)="selectAvatar()"
         [(selectedIndex)]="sel_avatar">

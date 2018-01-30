@@ -7,8 +7,11 @@ import { Avatar, Room, Message, Upload } from './chat.models';
 import { ChatService } from './services/chat.service';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/takeUntil';
 import { UUID } from 'angular2-uuid';
 import { DialogAddAvatar } from './dialogAddAvatar';
+import { observeOn } from 'rxjs/operators/observeOn';
+import { retry } from 'rxjs/operators/retry';
 
 @Component({
     templateUrl: 'home.component.html',
@@ -19,12 +22,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     names = names_list;
     images = images_list;
 
-    private ngUnsubscribe = new Subject();
+    private isReady = false;
+    destroy$: Subject<boolean> = new Subject<boolean>();
     user_id = '';
     sel_avatar = 0;
     avatars: Avatar[] = [];
     messages: Message[] = [];
     all_rooms: Room[] = [];
+    all_rooms$: Subject<Room[]> = new Subject<Room[]>();
 
     new_for_avatars: string[] = [];
 
@@ -35,28 +40,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-
-        // #4 subscriptions avatars/rooms/messages/new
-        this.subscribeToChat();
-
         // #1 get user ID
-        this.auth.uid$.takeUntil(this.ngUnsubscribe).subscribe(
-            // #2 get avatars by uid
+        this.auth.uid$.takeUntil(this.destroy$).subscribe(
             uid => {
                 this.user_id = uid;
-                // #3 get rooms (all)
-                this.chatService.getRooms();
-                this.chatService.getAvatars(uid);
+                this.subscribeToChat(uid);
             }
         );
     }
 
-    subscribeToChat() {
+    subscribeToChat(user_id: string) {
 
-        // subscribe to avatars
-        this.chatService.avatars$.takeUntil(this.ngUnsubscribe).subscribe(
+        // #2 get avatars by uid
+        this.chatService.getAvatars(user_id).takeUntil(this.destroy$).subscribe(
             (resp) => {
-                console.log(resp);
                 // sort by time
                 resp = resp.sort((a, b) => {
                     if (a.create_date > b.create_date) {
@@ -69,35 +66,44 @@ export class HomeComponent implements OnInit, OnDestroy {
                 });
                 this.avatars = resp;
                 this.avatars.forEach(bot => {
-                    this.all_rooms.forEach(r => bot.rooms.push(new Room(r.name)));
+                    bot.rooms = this.getNewArray(this.all_rooms);
+                    this.all_rooms$.takeUntil(this.destroy$).subscribe(rooms => {
+                        bot.rooms = this.getNewArray(rooms);
+                    });
                 });
                 this.sel_avatar = 0;
+                this.ready();
             }
         );
 
-        // subscribe to rooms
-        this.chatService.rooms_keys$.takeUntil(this.ngUnsubscribe).subscribe(
+        // #3 get all rooms
+        this.chatService.getRooms().takeUntil(this.destroy$).subscribe(
             (resp) => {
-                this.all_rooms = resp.map(name => new Room(name) );
-                this.subscribeToRooms();
+                this.all_rooms$.next(resp.map(name => {
+                     const r = new Room(name);
+                     this.chatService.subscribeToChat(r.url);
+                     this.all_rooms.push(r);
+                     this.ready();
+                     return r;
+                    }));
              }
         );
 
-        // subscribe to new messages
-        this.chatService.messages$.takeUntil(this.ngUnsubscribe).subscribe(
+        // #4 subscribe to new messages
+        this.chatService.messages$.takeUntil(this.destroy$).subscribe(
             (resp) => { this.messages = resp; }
         );
 
-        // subscribe to new in room
-        this.chatService.newMessageInRoom$.takeUntil(this.ngUnsubscribe).subscribe(
+        // #5 subscribe to new in room
+        this.chatService.newMessageInRoom$.takeUntil(this.destroy$).subscribe(
             (url) => {
+                console.log('try get new!');
                 let i = 0;
                 this.avatars.forEach(bot => {
                     bot.rooms.forEach(room => {
                         const hasNew = room.url === url && bot.id !== this.avatars[this.sel_avatar].id;
                         if (hasNew) {
                             room.hasNewMessage = hasNew;
-
                             // set alarm css to new message for avatar
                             const ava = 'avatar' + i;
                             const ind = this.new_for_avatars.indexOf(ava);
@@ -108,6 +114,15 @@ export class HomeComponent implements OnInit, OnDestroy {
                     i++;
                 });
         });
+    }
+
+
+    // select room after loading avatars and rooms
+    ready() {
+        if (!this.isReady && this.all_rooms.length > 0 && this.avatars.length > 0) {
+            this.isReady = true;
+            this.selectRoom(this.avatars[0].sel_room);
+        }
     }
 
 // Add new message
@@ -142,7 +157,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           data: { new_name: new_name, img: img_name }
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().takeUntil(this.destroy$).subscribe(result => {
             const av = new Avatar();
             av.name = new_name;
             av.img = img_name;
@@ -159,12 +174,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     selectRoom(e: string) {
         this.avatars[this.sel_avatar].sel_room = e;
         this.chatService.selectRoom(e);
-    }
-
-    subscribeToRooms() {
-        this.all_rooms.forEach(r => {
-            this.chatService.subscribeToChat(r.url);
-        });
     }
 
     addRoom(e: Room) {
@@ -185,10 +194,19 @@ export class HomeComponent implements OnInit, OnDestroy {
         return -1;
     }
 
+    private getNewArray(arr: Array<any>): Array<any> {
+        const newArray = [];
+        arr.forEach(item => {
+            newArray.push({...item});
+        });
+        return newArray;
+    }
+
 
     ngOnDestroy() {
-        console.log('-onDestroy-');
-        this.ngUnsubscribe.unsubscribe();
+        console.log('-onDestroy home-');
+        this.destroy$.next(true);
+        this.destroy$.unsubscribe();
         this.chatService.ngOnDestroy();
     }
 }

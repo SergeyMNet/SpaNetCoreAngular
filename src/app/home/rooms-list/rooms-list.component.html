@@ -4,7 +4,7 @@
     <div class="list">
         <p *ngFor="let room of rooms" 
             (click)="selRoom(room)" 
-            [ngClass]="{sel: room.name === sel_room.name}"
+            [ngClass]="{sel: room.url === sel_room_url}"
             class="chat-item"># {{room.name}} 
             <mat-icon *ngIf="room.hasNewMessage" class="mat-18">new_releases</mat-icon></p>
     </div>

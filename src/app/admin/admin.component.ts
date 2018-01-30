@@ -1,21 +1,18 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatInput, MatSnackBar } from '@angular/material';
 import { BaseChartDirective } from 'ng2-charts/ng2-charts';
-import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { map } from 'rxjs/operator/map';
 import 'rxjs/add/operator/takeUntil';
-
 
 import { AppState } from './reducers';
 import { AdminActions } from './actions';
 import { FireChatService, SignalrService } from './services';
 import { DialogEditRoom } from './dialogEditRoom';
-
-
 import { ChatModel } from './admin.models';
 
 @Component({
@@ -41,7 +38,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     isReady = false;
 
     private searchTerms = new Subject<string>();
-    private ngUnsubscribe = new Subject();
+    private ngUnsubscribeAll = new Subject();
 
     public testMessages = [];
     public testData = 0;
@@ -64,10 +61,11 @@ export class AdminComponent implements OnInit, OnDestroy {
         this.chats$
             .map(res => { this.isReady = false; return res; })
             .map(res => { setTimeout(() => {this.isReady = res.length > 0; }, 500); })
+            .takeUntil(this.ngUnsubscribeAll)
             .subscribe();
 
         // use search pipe
-        this.searchTerms.pipe(debounceTime(300), distinctUntilChanged()).takeUntil(this.ngUnsubscribe)
+        this.searchTerms.pipe(debounceTime(300), distinctUntilChanged()).takeUntil(this.ngUnsubscribeAll)
             .subscribe(s => { this.store.dispatch(this.adminActions.filterChat(s)); });
     }
 
@@ -80,7 +78,7 @@ export class AdminComponent implements OnInit, OnDestroy {
             data:  Object.assign({}, chat)
         });
 
-        dialogRef.afterClosed().takeUntil(this.ngUnsubscribe).subscribe(result => {
+        dialogRef.afterClosed().takeUntil(this.ngUnsubscribeAll).subscribe(result => {
             if (result !== undefined) {
                 this.store.dispatch(this.adminActions.editChat({old: chat, new: result}));
                 this.showSnack('Chat has edited!', this.adminActions.undoEditChat());
@@ -95,13 +93,13 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     private showSnack(message: string, action: any) {
         const snack = this.undoSnackBar.open(message, 'Undo', { duration: 5000, horizontalPosition: 'center' });
-        snack.afterDismissed().takeUntil(this.ngUnsubscribe).subscribe(() => {});
-        snack.onAction().takeUntil(this.ngUnsubscribe).subscribe(() => {
+        snack.afterDismissed().takeUntil(this.ngUnsubscribeAll).subscribe(() => {});
+        snack.onAction().takeUntil(this.ngUnsubscribeAll).subscribe(() => {
             this.store.dispatch(action);
         });
     }
 
     ngOnDestroy() {
-        this.ngUnsubscribe.unsubscribe();
+        this.ngUnsubscribeAll.unsubscribe();
     }
 }

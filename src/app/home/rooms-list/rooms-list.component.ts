@@ -9,9 +9,8 @@ import { DialogOverviewExampleDialog } from './dialogs/dialogOverviewExampleDial
     templateUrl: 'rooms-list.component.html',
     styleUrls: ['rooms-list.component.scss']
 })
-export class RoomsListComponent implements OnInit {
+export class RoomsListComponent {
 
-    sel_room: Room = new Room();
     @Input() sel_room_url = '';
     @Input() rooms: Room[] = [];
     @Output() addRoom: EventEmitter<any> = new EventEmitter();
@@ -20,21 +19,9 @@ export class RoomsListComponent implements OnInit {
     constructor(public dialog: MatDialog) {
     }
 
-    ngOnInit() {
-        this.startSelRoom();
-    }
-
-    startSelRoom() {
-        this.rooms.forEach(r => {
-            if (r.url === this.sel_room_url) {
-                this.sel_room = r;
-            }
-        });
-    }
-
     selRoom(room: Room) {
-        this.sel_room = room;
-        this.selectRoom.emit(this.sel_room.url);
+        this.sel_room_url = room.url;
+        this.selectRoom.emit(this.sel_room_url);
         const index = this.rooms.indexOf(room, 0);
         this.rooms[index].hasNewMessage = false;
     }
@@ -58,8 +45,8 @@ export class RoomsListComponent implements OnInit {
         if (room != null && room.name != null && room.name.length > 0) {
             const r = new Room(room.name);
             this.addRoom.emit(r);
-            this.sel_room = r;
-            this.selectRoom.emit(this.sel_room.url);
+            this.sel_room_url = r.url;
+            this.selectRoom.emit(this.sel_room_url);
             console.log('saved');
         } else {
             console.log('canceled');

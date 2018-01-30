@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Http } from '@angular/http';
 import { AngularFireDatabase } from 'angularfire2/database';
 import {  } from 'rxjs/Observable';
@@ -18,10 +18,8 @@ const chat_rooms_url = '/chat_rooms/';
 const users_url = '/users/';
 
 @Injectable()
-export class FireChatService {
-    constructor(
-        private http: Http,
-        private database: AngularFireDatabase) {
+export class FireChatService implements OnDestroy {
+    constructor(private database: AngularFireDatabase) {
     }
 
     // get Chats names and Messages count
@@ -64,6 +62,10 @@ export class FireChatService {
     public deleteChat(chat: any): Promise<any> {
         console.log('service remove ' + chat);
         return this.database.list<any>(chat_rooms_url + chat).remove();
+    }
+
+    ngOnDestroy() {
+        console.log('-Unscribe service-');
     }
 }
 
