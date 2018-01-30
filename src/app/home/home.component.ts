@@ -12,6 +12,7 @@ import { UUID } from 'angular2-uuid';
 import { DialogAddAvatar } from './dialogAddAvatar';
 import { observeOn } from 'rxjs/operators/observeOn';
 import { retry } from 'rxjs/operators/retry';
+import { LocalChatService } from './services/index';
 
 @Component({
     templateUrl: 'home.component.html',
@@ -36,7 +37,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     constructor(public auth: AuthService,
                 public dialog: MatDialog,
-                public chatService: ChatService) {
+                public chatService: ChatService,
+                // public chatService: LocalChatService
+            ) {
     }
 
     ngOnInit() {
@@ -54,6 +57,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         // #2 get avatars by uid
         this.chatService.getAvatars(user_id).takeUntil(this.destroy$).subscribe(
             (resp) => {
+                console.log(resp);
                 // sort by time
                 resp = resp.sort((a, b) => {
                     if (a.create_date > b.create_date) {

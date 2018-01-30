@@ -49,7 +49,7 @@ namespace ChatServer
 
             app.UseSignalR(routes =>
             {
-                routes.MapHub<TestHub>("test");
+                routes.MapHub<UsersHub>("users");
             });
         }
     }

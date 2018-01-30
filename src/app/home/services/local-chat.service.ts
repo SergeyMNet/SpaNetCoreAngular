@@ -7,7 +7,6 @@ import { Message, ChatRoom, Room, Avatar, Upload } from '../chat.models';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { IChatService } from './ichat.interface';
-import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
 const hub_url = 'http://localhost:5300';
 const chat_rooms_url = '/chat_rooms/';
@@ -16,29 +15,32 @@ const users_url = '/users/';
 
 
 @Injectable()
-export class LocalChatService implements OnInit, IChatService {
+export class LocalChatService implements IChatService, OnDestroy {
 
     private _hubConnection: HubConnection;
 
+    private avatars: Avatar[] = [];
     private chatRooms: ChatRoom[] = [];
     private subscribe_to_new_messages: Subscription;
 
-    newMessageInRoom$: Subject<string>;
-    messages$: Subject<Message[]>;
+    newMessageInRoom$: Subject<string> = new Subject<string>();
+    messages$: Subject<Message[]> = new Subject<Message[]>();
 
-
-    ngOnInit(): void {
+    constructor() {
         this.openConnection();
     }
 
+
     private openConnection() {
-        this._hubConnection = new HubConnection(hub_url);
+        console.log('init');
+        this._hubConnection = new HubConnection(hub_url + users_url);
         this._hubConnection
           .start()
           .then(() => console.log('Connection started!'))
           .catch(err => console.error('Error while establishing connection :('));
 
     }
+
 
     public addMessage(message: Message) {
         const to = hub_url + chat_rooms_url + message.room_id;
@@ -47,29 +49,40 @@ export class LocalChatService implements OnInit, IChatService {
           .catch(err => console.error(err));
     }
 
+//#region Avatars
+
     public getAvatars(user_id: string): Observable<Array<Avatar>> {
-        const to = hub_url + users_url + user_id;
+        console.log('try get users');
+        const to = 'avatars';
         const avatars$ = new Subject<Array<Avatar>>();
-        this._hubConnection.on(to, resp => {
-            avatars$.next(resp);
+
+        this._hubConnection.on(to, avatars => {
+            console.log(avatars);
+            avatars$.next(avatars);
         });
+
         return avatars$;
     }
 
     public addAvatar(avatar: Avatar) {
-        const to = hub_url + users_url + avatar.id;
+        const to = 'avatars';
+        console.warn(avatar);
+        avatar.create_date = Date.now();
         this._hubConnection
           .invoke(to, avatar)
           .catch(err => console.error(err));
     }
 
     public removeAvatar(avatar: Avatar) {
-        const to = hub_url + users_url + 'remove';
+        const to = 'remove';
         this._hubConnection
-          .invoke(to, avatar)
+          .invoke(to, avatar.id)
           .catch(err => console.error(err));
     }
 
+    //#endregion
+
+//#region  Rooms
     public getRooms(): Observable<Array<string>> {
         const to = hub_url + chat_rooms_url + 'keys';
         const rooms$ = new Subject<Array<string>>();
@@ -133,8 +146,10 @@ export class LocalChatService implements OnInit, IChatService {
         }
     }
 
+    //#endregion
 
-    //#region helpers
+
+//#region helpers
     private hasRoomInArray(arr: ChatRoom[], val: string): boolean {
         return arr.some(function (arrVal) {
             return val === arrVal.room;
@@ -154,6 +169,11 @@ export class LocalChatService implements OnInit, IChatService {
             }
         }
         return -1;
+    }
+
+    ngOnDestroy() {
+        console.log('-Unscribe local.chat.service-');
+        this.chatRooms = [];
     }
     //#endregion
 

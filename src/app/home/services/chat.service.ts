@@ -33,6 +33,7 @@ export class ChatService implements OnDestroy, IChatService {
                 private store: AngularFirestore) {
     }
 
+
 //#region Messages CRUD
     public addMessage(message: Message) {
 
