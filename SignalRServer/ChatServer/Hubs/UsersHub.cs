@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChatServer.Models;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 
-namespace ChatServer
+namespace ChatServer.Hubs
 {
     /// <summary>
     /// Avatas Hub
@@ -14,7 +15,7 @@ namespace ChatServer
     public class UsersHub : Hub
     {
         // todo: fake Db
-        public static List<object> allAvatars = new List<object>();
+        public static List<Avatar> allAvatars = new List<Avatar>();
 
 
         /// <summary>
@@ -22,9 +23,21 @@ namespace ChatServer
         ///     - share between all
         ///     - TODO: save avatar to db
         /// </summary>
-        public void Avatars(object newAvatar)
+        public void add(object newAvatar)
         {
-            allAvatars.Add(newAvatar);
+            var json = JsonConvert.SerializeObject(newAvatar);
+            Avatar a = JsonConvert.DeserializeObject<Avatar>(json);
+
+            allAvatars.Add(a);
+            Clients.All.InvokeAsync("avatars", allAvatars);
+        }
+
+        public void remove(object avatar)
+        {
+            var json = JsonConvert.SerializeObject(avatar);
+            Avatar a = JsonConvert.DeserializeObject<Avatar>(json);
+            allAvatars.Remove(allAvatars.FirstOrDefault(ava => ava.id == a.id));
+
             Clients.All.InvokeAsync("avatars", allAvatars);
         }
     }

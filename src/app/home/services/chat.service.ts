@@ -113,7 +113,7 @@ export class ChatService implements OnDestroy, IChatService {
 
     public getRooms(): Observable<Array<string>> {
         return this.database.object('/chat_rooms/')
-            .valueChanges().take(1).map(rooms => {
+            .valueChanges().map(rooms => {
                 console.log('get rooms');
                 if (rooms !== null) {
                     const keys = Object.keys(rooms);

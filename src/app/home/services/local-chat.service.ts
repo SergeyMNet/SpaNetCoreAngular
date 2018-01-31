@@ -12,12 +12,15 @@ const hub_url = 'http://localhost:5300';
 const chat_rooms_url = '/chat_rooms/';
 const files_url = '/images/';
 const users_url = '/users/';
+const messages_url = '/messages/';
 
 
 @Injectable()
 export class LocalChatService implements IChatService, OnDestroy {
 
-    private _hubConnection: HubConnection;
+    private _avatarsHubConnection: HubConnection;
+    private _roomsHubConnection: HubConnection;
+    private _messagesHubConnection: HubConnection;
 
     private avatars: Avatar[] = [];
     private chatRooms: ChatRoom[] = [];
@@ -33,21 +36,34 @@ export class LocalChatService implements IChatService, OnDestroy {
 
     private openConnection() {
         console.log('init');
-        this._hubConnection = new HubConnection(hub_url + users_url);
-        this._hubConnection
+        this._avatarsHubConnection = new HubConnection(hub_url + users_url);
+        this._avatarsHubConnection
           .start()
-          .then(() => console.log('Connection started!'))
+          .then(() => console.log('avatars Connection started!'))
+          .catch(err => console.error('Error while establishing connection :('));
+
+        this._roomsHubConnection = new HubConnection(hub_url + chat_rooms_url);
+        this._roomsHubConnection
+          .start()
+          .then(() => console.log('rooms Connection started!'))
+          .catch(err => console.error('Error while establishing connection :('));
+
+        this._messagesHubConnection = new HubConnection(hub_url + messages_url);
+        this._messagesHubConnection
+          .start()
+          .then(() => console.log('messages Connection started!'))
           .catch(err => console.error('Error while establishing connection :('));
 
     }
 
 
     public addMessage(message: Message) {
-        const to = hub_url + chat_rooms_url + message.room_id;
-        this._hubConnection
-          .invoke(to, message)
-          .catch(err => console.error(err));
+        const to = 'add';
+        this._messagesHubConnection
+           .invoke(to, message)
+           .catch(err => console.error(err));
     }
+
 
 //#region Avatars
 
@@ -56,27 +72,31 @@ export class LocalChatService implements IChatService, OnDestroy {
         const to = 'avatars';
         const avatars$ = new Subject<Array<Avatar>>();
 
-        this._hubConnection.on(to, avatars => {
+        this._avatarsHubConnection.on(to, avatars => {
             console.log(avatars);
-            avatars$.next(avatars);
+            const all = avatars as Array<Avatar>;
+            all.forEach(ava => {
+                ava.rooms = [];
+            });
+            console.log(all);
+            avatars$.next(all);
         });
 
         return avatars$;
     }
 
     public addAvatar(avatar: Avatar) {
-        const to = 'avatars';
-        console.warn(avatar);
+        const to = 'add';
         avatar.create_date = Date.now();
-        this._hubConnection
+        this._avatarsHubConnection
           .invoke(to, avatar)
           .catch(err => console.error(err));
     }
 
     public removeAvatar(avatar: Avatar) {
         const to = 'remove';
-        this._hubConnection
-          .invoke(to, avatar.id)
+        this._avatarsHubConnection
+          .invoke(to, avatar)
           .catch(err => console.error(err));
     }
 
@@ -84,9 +104,11 @@ export class LocalChatService implements IChatService, OnDestroy {
 
 //#region  Rooms
     public getRooms(): Observable<Array<string>> {
-        const to = hub_url + chat_rooms_url + 'keys';
+        console.log('try get rooms');
+        const to = 'rooms';
         const rooms$ = new Subject<Array<string>>();
-        this._hubConnection.on(to, keys => {
+        this._roomsHubConnection.on(to, keys => {
+            console.log({message: 'geting rooms',  keys});
             rooms$.next(keys);
         });
         return rooms$;
@@ -103,23 +125,30 @@ export class LocalChatService implements IChatService, OnDestroy {
             room.room = chat_url;
             room.messages$ = new Subject<Message[]>();
 
-            // subscribe to curent chat
-            const to = hub_url + chat_rooms_url + chat_url;
-            this._hubConnection.on(to, resp => {
-                    this.newMessageInRoom$.next(this.getRoom(room).url);
-                    // add all messages to chat
-                    room.messages$.next(resp.map(item => {
-                        room.hasNewMessage = true;
-                        item.time = new Date(item.date_utc_string);
-                        return item;
-                    }));
+            // todo: subscribe to curent chat
+            this._messagesHubConnection.on('messages', resp => {
+                resp = resp.filter(m => m.room_id === room.room);
+                console.log({message: 'geting messages filter',  resp});
+                this.newMessageInRoom$.next(room.room);
+                // add all messages to chat
+                room.messages$.next(resp.map(item => {
+                    room.hasNewMessage = true;
+                    item.time = new Date(item.date_utc_string);
+                    return item;
+                }));
 
-                    room.messagesArray = resp.map(item => {
-                        room.hasNewMessage = true;
-                        item.time = new Date(item.date_utc_string);
-                        return item;
-                    });
+                room.messagesArray = resp.map(item => {
+                    room.hasNewMessage = true;
+                    item.time = new Date(item.date_utc_string);
+                    return item;
                 });
+            });
+
+            // add room
+            const to = 'add';
+            this._roomsHubConnection
+                .invoke(to, chat_url)
+                .catch(err => console.error(err));
 
             // save room
             this.chatRooms.push(room);

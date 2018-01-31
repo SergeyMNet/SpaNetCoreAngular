@@ -7,21 +7,11 @@ namespace ChatServer.Models
 {
     public class Avatar
     {
-        public string Id { get; set; }
-        public string UserId { get; set; }
-        public string Name { get; set; }
-        public string UserImage { get; set; }
-        public int CreateDate { get; set; }
-        public string SelectedRoom { get; set; }
-        
-
-
-    //id: string;
-    //uid: string;
-    //name: string;
-    //img: string;
-    //create_date: number;
-    //sel_room = '/chat_rooms/main';
-    //rooms: Room[] = [];
+        public string id { get; set; }
+        public string uid { get; set; }
+        public string name { get; set; }
+        public string img { get; set; }
+        public long create_date { get; set; }
+        public string sel_room { get; set; }
     }
 }

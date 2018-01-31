@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatServer.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -50,6 +51,8 @@ namespace ChatServer
             app.UseSignalR(routes =>
             {
                 routes.MapHub<UsersHub>("users");
+                routes.MapHub<RoomsHub>("chat_rooms");
+                routes.MapHub<ChatHub>("messages");
             });
         }
     }

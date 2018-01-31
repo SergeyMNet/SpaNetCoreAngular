@@ -83,6 +83,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         // #3 get all rooms
         this.chatService.getRooms().takeUntil(this.destroy$).subscribe(
             (resp) => {
+                this.all_rooms = [];
                 this.all_rooms$.next(resp.map(name => {
                      const r = new Room(name);
                      this.chatService.subscribeToChat(r.url);
@@ -123,6 +124,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     // select room after loading avatars and rooms
     ready() {
+        console.warn({m: 'try ready', r: this.all_rooms, a: this.avatars});
         if (!this.isReady && this.all_rooms.length > 0 && this.avatars.length > 0) {
             this.isReady = true;
             this.selectRoom(this.avatars[0].sel_room);
@@ -182,7 +184,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     addRoom(e: Room) {
         this.chatService.subscribeToChat(e.url);
-        this.avatars[this.sel_avatar].rooms.push(e);
+        this.pushInitMessage(e.url);
     }
 
 
@@ -206,6 +208,16 @@ export class HomeComponent implements OnInit, OnDestroy {
         return newArray;
     }
 
+    private pushInitMessage(url: string) {
+        const m = new Message();
+        m.room_id = url;
+        m.text = 'Hi!';
+        m.attachFile = null;
+        m.from = this.avatars[this.sel_avatar].name;
+        m.photo = this.avatars[this.sel_avatar].img;
+        m.date_utc_string = new Date().toUTCString();
+        this.addNewMessage(m);
+    }
 
     ngOnDestroy() {
         console.log('-onDestroy home-');
