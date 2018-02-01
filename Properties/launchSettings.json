@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/storage/all",
+      "launchUrl": "chat",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -19,11 +19,11 @@
     "ChatServer": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/storage/all",
+      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5301/"
+      "applicationUrl": "http://localhost:5300/"
     }
   }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,7 +45,8 @@ namespace ChatServer
             }
 
             app.UseCors("CorsPolicy");
-
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseMvc();
 
             app.UseSignalR(routes =>
