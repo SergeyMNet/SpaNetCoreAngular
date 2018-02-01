@@ -15,14 +15,15 @@ Stack
 - Typescript
 - Angular CLI
 - Angular Material 2
+- dotnet-core
+- SignalR-core
+- .Net Core CLI
 - Firebase SDK with OAuth authentication
 - Firebase SDK with Realtime Database
 - Firebase SDK with Storage
 - RxJS
-- Redux
-- @ngrx/store
-- @ngrx/effects 
-- @ngrx/store-devtools
+- NgRx, Redux 
+- @ngrx/store, @ngrx/effects, @ngrx/store-devtools
 - SASS
 - Circle CI
 
@@ -34,6 +35,14 @@ Live DEMO [here](https://alice-1d9df.firebaseapp.com/)!
 
 ## Development server
 
-Run `npm i` for install all nodes.
-Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. 
+For simple start angular project with firebase SDK:
+ - Run `npm i` for install all nodes.
+ - Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. 
+
+For first start with dotnet-core server and signalR - you need install [dotnet core](https://docs.microsoft.com/en-us/dotnet/core/)
+and then run commands:
+ - Run `npm i` for install all nodes.
+ - Run `ng build` for build angular project
+ - Run `dotnet build ChatServer.csproj` for build dotnet-core app
+ - Run `dotnet run` for run server. Navigate to `http://localhost:5300/`. 
 
