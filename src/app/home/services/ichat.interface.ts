@@ -16,4 +16,6 @@ export interface IChatService {
     getRooms(): Observable<Array<string>>;
     subscribeToChat(chat_url: string);
     selectRoom(chat_url: string);
+
+    ngOnDestroy();
 }

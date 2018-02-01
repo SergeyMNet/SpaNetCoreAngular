@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChatServer.Db;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChatServer.Hubs
 {
     public class RoomsHub : Hub
     {
-        // todo: fake Db
-        public static List<string> allRooms = new List<string>();
-
-
         /// <summary>
         /// Geting new Room
         ///     - share between all
@@ -21,15 +18,15 @@ namespace ChatServer.Hubs
         {
             Console.WriteLine("-- newRoom = " + newRoom);
             string name = newRoom.Split("/chat_rooms/", StringSplitOptions.None)[1];
-            if(!allRooms.Any(r => r == name))
-            allRooms.Add(name);
-            Clients.All.InvokeAsync("rooms", allRooms);
+            if(!FakeStorage.Rooms.Any(r => r == name))
+                FakeStorage.Rooms.Add(name);
+            Clients.All.InvokeAsync("rooms", FakeStorage.Rooms);
         }
 
         public void remove(string room)
         {
-            allRooms.Remove(room);
-            Clients.All.InvokeAsync("rooms", allRooms);
+            FakeStorage.Rooms.Remove(room);
+            Clients.All.InvokeAsync("rooms", FakeStorage.Rooms);
         }
     }
 }

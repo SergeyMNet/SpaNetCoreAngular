@@ -7,9 +7,8 @@
     <div class="server-select">
     <mat-form-field>
         <i class="fas fa-globe"></i>
-        <mat-select [(value)]="selected_server" placeholder="server">
-            <mat-option value="Firebase"><i class="fas fa-fire"></i> Firebase</mat-option>
-            <mat-option value="SingnalR"><i class="fas fa-server"></i> SingnalR</mat-option>
+        <mat-select [(ngModel)]="model.server" (change)="onServiceChange()" placeholder="server">
+            <mat-option *ngFor="let s of services" [value]="s">{{s}}</mat-option>
         </mat-select>
     </mat-form-field>
     </div>

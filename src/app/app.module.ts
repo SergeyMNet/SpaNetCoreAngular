@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 // modules
 import { CustomMaterialModule } from './material.module';
@@ -16,6 +17,8 @@ import { AdminModule } from './admin/admin.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 
+// services
+import { ChooseServerService } from './_services';
 
 @NgModule({
   bootstrap: [
@@ -31,11 +34,15 @@ import { HeaderComponent } from './header/header.component';
     HttpModule,
     BrowserAnimationsModule,
     CustomMaterialModule,
+    HttpClientModule,
     RouterModule.forRoot([], {useHash: false}),
     FirebaseModule,
     AdminModule,
     AuthModule,
     HomeModule,
+  ],
+  providers: [
+    ChooseServerService
   ]
 })
 export class AppModule { }

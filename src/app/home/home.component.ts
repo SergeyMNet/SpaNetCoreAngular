@@ -13,6 +13,8 @@ import { DialogAddAvatar } from './dialogAddAvatar';
 import { observeOn } from 'rxjs/operators/observeOn';
 import { retry } from 'rxjs/operators/retry';
 import { LocalChatService } from './services/index';
+import { IChatService } from './services/ichat.interface';
+import { ChooseServerService } from '../_services';
 
 @Component({
     templateUrl: 'home.component.html',
@@ -34,15 +36,21 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     new_for_avatars: string[] = [];
 
+    public chatService: IChatService;
+    private curent_service = 'firebase';
 
-    constructor(public auth: AuthService,
-                public dialog: MatDialog,
-                public chatService: ChatService,
-                // public chatService: LocalChatService
+    constructor(private auth: AuthService,
+                private dialog: MatDialog,
+                private fcs: ChatService,
+                private lcs: LocalChatService,
+                private chooseServer: ChooseServerService
             ) {
+        this.chatService = fcs;
     }
 
     ngOnInit() {
+        this.chooseServer.server$.takeUntil(this.destroy$).subscribe(s => this.restartServer(s));
+
         // #1 get user ID
         this.auth.uid$.takeUntil(this.destroy$).subscribe(
             uid => {
@@ -50,6 +58,25 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.subscribeToChat(uid);
             }
         );
+    }
+
+    restartServer(server: string) {
+        if (this.curent_service !== server) {
+            this.curent_service = server;
+            this.ngOnDestroy();
+
+            this.isReady = false;
+            this.sel_avatar = 0;
+            this.avatars = [];
+            this.messages = [];
+            this.all_rooms = [];
+            this.all_rooms$ = new Subject<Room[]>();
+            this.new_for_avatars = [];
+            this.destroy$ = new Subject<boolean>();
+
+            this.chatService = (server === 'signalr') ? this.lcs : this.fcs;
+            this.ngOnInit();
+        }
     }
 
     subscribeToChat(user_id: string) {
@@ -124,9 +151,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     // select room after loading avatars and rooms
     ready() {
-        console.warn({m: 'try ready', r: this.all_rooms, a: this.avatars});
         if (!this.isReady && this.all_rooms.length > 0 && this.avatars.length > 0) {
             this.isReady = true;
+            console.warn({m: 'try ready: ', r: this.isReady});
             this.selectRoom(this.avatars[0].sel_room);
         }
     }

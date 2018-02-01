@@ -1,4 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, Subscribable } from 'rxjs/Observable';
 import { HubConnection } from '@aspnet/signalr-client';
 import { UUID } from 'angular2-uuid';
@@ -9,6 +10,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { IChatService } from './ichat.interface';
 
 const hub_url = 'http://localhost:5300';
+const api_url = '/api/storage/';
 const chat_rooms_url = '/chat_rooms/';
 const files_url = '/images/';
 const users_url = '/users/';
@@ -29,7 +31,7 @@ export class LocalChatService implements IChatService, OnDestroy {
     newMessageInRoom$: Subject<string> = new Subject<string>();
     messages$: Subject<Message[]> = new Subject<Message[]>();
 
-    constructor() {
+    constructor(private http: HttpClient) {
         this.openConnection();
     }
 
@@ -72,6 +74,11 @@ export class LocalChatService implements IChatService, OnDestroy {
         const to = 'avatars';
         const avatars$ = new Subject<Array<Avatar>>();
 
+        this.http.get(hub_url + api_url + 'avatars').take(1).subscribe(a => {
+            const all = a as Array<Avatar>;
+            avatars$.next(all);
+        });
+
         this._avatarsHubConnection.on(to, avatars => {
             console.log(avatars);
             const all = avatars as Array<Avatar>;
@@ -103,10 +110,17 @@ export class LocalChatService implements IChatService, OnDestroy {
     //#endregion
 
 //#region  Rooms
+
     public getRooms(): Observable<Array<string>> {
         console.log('try get rooms');
         const to = 'rooms';
         const rooms$ = new Subject<Array<string>>();
+
+        this.http.get(hub_url + api_url + 'rooms').take(1).subscribe(r => {
+            const all = r as Array<string>;
+            rooms$.next(all);
+        });
+
         this._roomsHubConnection.on(to, keys => {
             console.log({message: 'geting rooms',  keys});
             rooms$.next(keys);
@@ -124,6 +138,15 @@ export class LocalChatService implements IChatService, OnDestroy {
             room.avatar = 'ALL';
             room.room = chat_url;
             room.messages$ = new Subject<Message[]>();
+
+            this.http.get(hub_url + api_url + 'messages').take(1).subscribe(m => {
+                const all = m as Array<Message>;
+                room.messagesArray = all.filter(mes => mes.room_id === room.room).map(item => {
+                    room.hasNewMessage = true;
+                    item.time = new Date(item.date_utc_string);
+                    return item;
+                });
+            });
 
             // todo: subscribe to curent chat
             this._messagesHubConnection.on('messages', resp => {
@@ -156,6 +179,7 @@ export class LocalChatService implements IChatService, OnDestroy {
     }
 
     public selectRoom(chat_url: string) {
+        console.warn('sel ' + chat_url);
         // get current room
         const index = this.getIndex(this.chatRooms, 'room', chat_url);
         if (index > -1) {
