@@ -18,9 +18,7 @@ Stack
 - dotnet-core
 - SignalR-core
 - .Net Core CLI
-- Firebase SDK with OAuth authentication
-- Firebase SDK with Realtime Database
-- Firebase SDK with Storage
+- Firebase SDK with OAuth, Database, Storage
 - RxJS
 - NgRx, Redux 
 - @ngrx/store, @ngrx/effects, @ngrx/store-devtools
