@@ -1,0 +1,38 @@
+# Run docker-compose build
+# Run docker-compose up
+version: '3.1'
+
+services:
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    build:
+      context: .
+      dockerfile: .docker/nginx.dockerfile
+    volumes:
+      - ./dist:/usr/share/nginx/html
+    ports:
+      - "80:80"
+      - "443:443"      
+    links:    
+      - dotnet
+    networks:
+       - app-network
+
+  dotnet:
+    container_name: 'dotnet_server'
+    image: 'dotnet_server'
+    build:
+      context: ./server_dotnet_core
+      dockerfile: .docker/aspnetcore.development.dockerfile
+    volumes:
+      - ./server_dotnet_core:/var/www/dotnet_server
+    ports:
+     - "5050:5050"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

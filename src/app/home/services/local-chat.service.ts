@@ -9,7 +9,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { IChatService } from './ichat.interface';
 
-const hub_url = 'http://localhost:5300';
+const hub_url = 'http://localhost:5050';
 const api_url = '/api/storage/';
 const chat_rooms_url = '/chat_rooms/';
 const files_url = '/images/';
