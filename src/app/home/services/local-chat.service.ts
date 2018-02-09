@@ -4,17 +4,11 @@ import { Observable, Subscribable } from 'rxjs/Observable';
 import { HubConnection } from '@aspnet/signalr-client';
 import { UUID } from 'angular2-uuid';
 
+import { signalRConfig } from '../../../environments/signalR';
 import { Message, ChatRoom, Room, Avatar, Upload } from '../chat.models';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { IChatService } from './ichat.interface';
-
-const hub_url = 'http://localhost:5050';
-const api_url = '/api/storage/';
-const chat_rooms_url = '/chat_rooms/';
-const files_url = '/images/';
-const users_url = '/users/';
-const messages_url = '/messages/';
 
 
 @Injectable()
@@ -38,19 +32,19 @@ export class LocalChatService implements IChatService, OnDestroy {
 
     private openConnection() {
         console.log('init');
-        this._avatarsHubConnection = new HubConnection(hub_url + users_url);
+        this._avatarsHubConnection = new HubConnection(signalRConfig.hub_url + signalRConfig.users_url);
         this._avatarsHubConnection
           .start()
           .then(() => console.log('avatars Connection started!'))
           .catch(err => console.error('Error while establishing connection :('));
 
-        this._roomsHubConnection = new HubConnection(hub_url + chat_rooms_url);
+        this._roomsHubConnection = new HubConnection(signalRConfig.hub_url + signalRConfig.chat_rooms_url);
         this._roomsHubConnection
           .start()
           .then(() => console.log('rooms Connection started!'))
           .catch(err => console.error('Error while establishing connection :('));
 
-        this._messagesHubConnection = new HubConnection(hub_url + messages_url);
+        this._messagesHubConnection = new HubConnection(signalRConfig.hub_url + signalRConfig.messages_url);
         this._messagesHubConnection
           .start()
           .then(() => console.log('messages Connection started!'))
@@ -74,7 +68,7 @@ export class LocalChatService implements IChatService, OnDestroy {
         const to = 'avatars';
         const avatars$ = new Subject<Array<Avatar>>();
 
-        this.http.get(hub_url + api_url + 'avatars').take(1).subscribe(a => {
+        this.http.get(signalRConfig.hub_url + signalRConfig.api_url + 'avatars').take(1).subscribe(a => {
             const all = a as Array<Avatar>;
             avatars$.next(all);
         });
@@ -116,7 +110,7 @@ export class LocalChatService implements IChatService, OnDestroy {
         const to = 'rooms';
         const rooms$ = new Subject<Array<string>>();
 
-        this.http.get(hub_url + api_url + 'rooms').take(1).subscribe(r => {
+        this.http.get(signalRConfig.hub_url + signalRConfig.api_url + 'rooms').take(1).subscribe(r => {
             const all = r as Array<string>;
             rooms$.next(all);
         });
@@ -139,7 +133,7 @@ export class LocalChatService implements IChatService, OnDestroy {
             room.room = chat_url;
             room.messages$ = new Subject<Message[]>();
 
-            this.http.get(hub_url + api_url + 'messages').take(1).subscribe(m => {
+            this.http.get(signalRConfig.hub_url + signalRConfig.api_url + 'messages').take(1).subscribe(m => {
                 const all = m as Array<Message>;
                 room.messagesArray = all.filter(mes => mes.room_id === room.room).map(item => {
                     room.hasNewMessage = true;
