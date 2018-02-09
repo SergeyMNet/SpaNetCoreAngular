@@ -24,6 +24,7 @@ Stack
 - @ngrx/store, @ngrx/effects, @ngrx/store-devtools
 - SASS
 - Circle CI
+- Docker
 
 ## DEMO
 Live DEMO [here](https://alice-1d9df.firebaseapp.com/)!
@@ -33,14 +34,16 @@ Live DEMO [here](https://alice-1d9df.firebaseapp.com/)!
 
 ## Development server
 
-For simple start angular project with firebase SDK:
- - Run `npm i` for install all nodes.
- - Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. 
+1. Install Docker CE for Mac or Windows (http://docker.com)
 
-For first start with dotnet-core server and signalR - you need install [dotnet core](https://docs.microsoft.com/en-us/dotnet/core/)
-and then run commands:
- - Run `npm i` for install all nodes.
- - Run `ng build` for build angular project
- - Run `dotnet build ChatServer.csproj` for build dotnet-core app
- - Run `dotnet run` for run server. Navigate to `http://localhost:5300/`. 
+1. Install Angular CLI: `npm install @angular/cli -g`
 
+1. Run `npm install` at the root of the project
+
+1. Run `ng build`
+
+1. Run `docker-compose build`
+
+1. Run `docker-compose up`
+
+1. Navigate to http://localhost
