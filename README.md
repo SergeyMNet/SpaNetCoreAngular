@@ -1,4 +1,4 @@
-# ChatBotApp
+# SpaNetCoreAngular
 
 ![](https://www.bitrise.io/app/19d5f0f09e3648fd/status.svg?token=IlnA4JFO2kzSPpkJcEuWTA&branch=master)
 [![Build Status](https://travis-ci.org/SergeyMNet/chat-app.svg?branch=master)](https://travis-ci.org/SergeyMNet/chat-app)
